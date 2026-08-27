@@ -1,0 +1,17 @@
+.git
+.cursor
+.next
+**/.next
+**/node_modules
+**/.expo
+**/dist
+**/*.md
+!README.md
+npm-debug.log*
+.env*
+**/.DS_Store
+**/*.pem
+**/*.tsbuildinfo
+
+apps/mobile
+apps/desktop

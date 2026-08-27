@@ -1,0 +1,427 @@
+export type LocaleId = "tr" | "en";
+
+export const LOCALES: { id: LocaleId; label: string; flag: string }[] = [
+  { id: "tr", label: "Türkçe", flag: "🇹🇷" },
+  { id: "en", label: "English", flag: "🇬🇧" },
+];
+
+const tr = {
+  appName: "Neo Pomodoro",
+  tagline: "Odaklan. Kişiselleştir. İlerlemeni gör.",
+  taglineShort: "Odaklan. Kişiselleştir.",
+  goodMorning: "Günaydın",
+  homeIntro: "Bugünkü özete göz at ve odaklanmaya başla.",
+  navHome: "Ana Sayfa",
+  navPomodoro: "Pomodoro",
+  navHabits: "Alışkanlıklar",
+  navStats: "İstatistikler",
+  navSettings: "Ayarlar",
+  today: "Bugün",
+  focus: "Odak",
+  habit: "Alışkanlık",
+  completedPomodoros: "tamamlanan pomodoro",
+  totalTime: "toplam süre",
+  quickNav: "Hızlı geçiş",
+  startPomodoro: "Pomodoro başlat",
+  weeklySummary: "Haftalık özet",
+  pomodoroToday: "Bugün {n} tamamlanan pomodoro",
+  habitsToday: "Bugün {done}/{total} tamamlandı · %{pct}",
+  focusTotal: "Toplam {min} dakika odak",
+  timer: "Zamanlayıcı",
+  tasks: "Görevler",
+  phaseFocus: "Odak",
+  phaseShortBreak: "Kısa Mola",
+  phaseLongBreak: "Uzun Mola",
+  sessionMeta: "{current} / {total} odak seansı",
+  activeTask: "Aktif görev",
+  noActiveTask: "Şu an odaklandığın bir görev yok.",
+  selectTask: "Bir görev seçin...",
+  changeTask: "Değiştir",
+  dropTask: "Bırak",
+  newTask: "Yeni görev...",
+  targetPomos: "Hedef",
+  add: "Ekle",
+  noTasks: "Henüz görev yok.",
+  edit: "Düzenle",
+  delete: "Sil",
+  save: "Kaydet",
+  cancel: "İptal",
+  settingsAppearance: "Görünüm & Tema",
+  settingsLanguage: "Dil",
+  colorPalette: "Renk paleti",
+  uiStyle: "Arayüz stili",
+  uiStyleHint: "Tüm uygulama yüzeyleri seçtiğiniz stile göre değişir.",
+  customAccent: "Vurgu renginizi seçin",
+  custom: "Özel",
+  durations: "Süreler (dakika)",
+  focusDuration: "Odak",
+  shortBreak: "Kısa mola",
+  longBreak: "Uzun mola",
+  longBreakInterval: "Uzun mola aralığı",
+  preferences: "Tercihler",
+  autoStart: "Otomatik başlat",
+  sound: "Ses",
+  soundType: "Ses Türü",
+  notifications: "Bildirimler",
+  localStorageTitle: "Yerel depolama.",
+  localStorageBody:
+    "Görevler, alışkanlıklar, oturum kayıtları ve tercihleriniz localStorage ile cihazınızda tutulur.",
+  uiNeo: "Neomorphism",
+  uiNeoDesc: "Koyu yüzey, yumuşak gömme gölgeler",
+  uiGlass: "Glassmorphism",
+  uiGlassDesc: "Buzlu cam, blur ve şeffaflık",
+  uiClay: "Claymorphism",
+  uiClayDesc: "Kabartmalı, yumuşak 3D kil blokları",
+  uiSkeuo: "Skeuomorphism",
+  uiSkeuoDesc: "Metalik, parlak ve gerçekçi donanım",
+  uiLiquid: "Liquid Glass",
+  uiLiquidDesc: "Akışkan cam, speküler parlama",
+  uiFlat: "Flat Design",
+  uiFlatDesc: "Düz renkler, gölgesiz ve net",
+  themeMode: "Tema modu",
+  themeSystem: "Sistem",
+  themeLight: "Aydınlık",
+  themeDark: "Karanlık",
+  habitProgress: "Bugünkü ilerleme",
+  addHabit: "Yeni alışkanlık ekle",
+  newHabit: "Yeni alışkanlık",
+  habitPlaceholder: "Örn: 2 bardak su iç, 10 dk meditasyon...",
+  weeklyTarget: "Haftalık hedef",
+  daysPerWeek: "{n} gün / hafta",
+  noHabits: "Henüz alışkanlık yok",
+  noHabitsHint: "Küçük adımlarla büyük değişimler. İlk alışkanlığını ekle!",
+  thisWeek: "Bu hafta",
+  weekProgress: "{done}/{target} gün",
+  last7Days: "Son 7 gün — dokunarak işaretle",
+  last4Weeks: "Son 4 hafta",
+  statsToday: "Bugünün Özeti",
+  statsCompleted: "Bugün Tamamlanan",
+  statsSessions: "odak seansı",
+  statsTotalTime: "Toplam Süre",
+  statsFocusMinutes: "dakika odak",
+  statsHabitsToday: "Alışkanlıklar — Bugün",
+  statsWeekChart: "Son 7 Gün",
+  statsHeatmap: "Aktivite Haritası",
+  statsByTask: "Görev Dağılımı",
+  statsRecent: "Son Oturumlar",
+  statsNoSessions: "Henüz kayıtlı seans yok.",
+  generalFocus: "Genel Odaklanma",
+  done: "Bitti",
+  soundChime: "Melodik Çan",
+  soundDigital: "Dijital Bip",
+  soundBird: "Kuş Cıvıltısı",
+  soundGong: "Klasik Gong",
+  themeOcean: "Okyanus",
+  themeTomato: "Domates",
+  themeForest: "Orman",
+  themeViolet: "Menekşe",
+  themeAmber: "Kehribar",
+  themeRose: "Gül",
+  privacyNote:
+    "Tüm ayarlar ve istatistikler sunucuya gönderilmez — yalnızca tarayıcınızın yerel deposunda saklanır.",
+  minutesShort: "dk",
+  start: "Başlat",
+  pause: "Duraklat",
+  resume: "Devam",
+  reset: "Sıfırla",
+  skip: "Atla",
+  skipTitle: "Sonraki faza geç",
+  mainNav: "Ana menü",
+  streakDays: "{n} gün",
+  bestStreakLabel: "En iyi {n}",
+  totalCompletionsLabel: "{n} toplam",
+  confirmDeleteHabit: '"{title}" alışkanlığını silmek istiyor musun?',
+  confirmDeleteTask: '"{title}" görevini silmek istiyor musun?',
+  confirmDeleteSession: "{time} seansını silmek istediğinize emin misiniz?",
+  unknownDate: "Bilinmeyen tarih",
+  deletedTask: "Silinmiş görev",
+  habitsDoneOf: "tamamlandı",
+  heatmapLow: "Az",
+  heatmapHigh: "Çok",
+  sessionsCount: "{n} seans",
+  deleteRecord: "Kayıt sil",
+  dataSection: "Veriler",
+  exportData: "Dışa aktar",
+  importData: "İçe aktar",
+  resetData: "Tümünü sil",
+  exportHint:
+    "Yedek JSON olarak indirilir. İçe aktarma mevcut verilerin üzerine yazar.",
+  confirmReset:
+    "Tüm görevler, alışkanlıklar, istatistikler ve ayarlar silinecek. Emin misiniz?",
+  importError: "Geçersiz yedek dosyası.",
+  goodAfternoon: "Tünaydın",
+  goodEvening: "İyi akşamlar",
+  goodNight: "İyi geceler",
+  notifyFocusTitle: "Odak bitti!",
+  notifyFocusBody: "Mola zamanı.",
+  notifyShortTitle: "Kısa mola bitti!",
+  notifyShortBody: "Tekrar odaklanma zamanı.",
+  notifyLongTitle: "Uzun mola bitti!",
+  notifyLongBody: "Yeni bir odak seansına hazır mısın?",
+  estimatedPomos: "Tahmini pomodoro",
+  valueLabel: "Değer",
+  increase: "Artır",
+  decrease: "Azalt",
+  selectPlaceholder: "Seçin",
+} as const;
+
+const en: Record<keyof typeof tr, string> = {
+  appName: "Neo Pomodoro",
+  tagline: "Focus. Personalize. Track your progress.",
+  taglineShort: "Focus. Personalize.",
+  goodMorning: "Good morning",
+  homeIntro: "Check today's summary and start focusing.",
+  navHome: "Home",
+  navPomodoro: "Pomodoro",
+  navHabits: "Habits",
+  navStats: "Statistics",
+  navSettings: "Settings",
+  today: "Today",
+  focus: "Focus",
+  habit: "Habit",
+  completedPomodoros: "completed pomodoros",
+  totalTime: "total time",
+  quickNav: "Quick access",
+  startPomodoro: "Start pomodoro",
+  weeklySummary: "Weekly summary",
+  pomodoroToday: "{n} pomodoros completed today",
+  habitsToday: "Today {done}/{total} done · {pct}%",
+  focusTotal: "{min} minutes of focus total",
+  timer: "Timer",
+  tasks: "Tasks",
+  phaseFocus: "Focus",
+  phaseShortBreak: "Short Break",
+  phaseLongBreak: "Long Break",
+  sessionMeta: "{current} / {total} focus sessions",
+  activeTask: "Active task",
+  noActiveTask: "No task selected for focus.",
+  selectTask: "Select a task...",
+  changeTask: "Change",
+  dropTask: "Clear",
+  newTask: "New task...",
+  targetPomos: "Target",
+  add: "Add",
+  noTasks: "No tasks yet.",
+  edit: "Edit",
+  delete: "Delete",
+  save: "Save",
+  cancel: "Cancel",
+  settingsAppearance: "Appearance & Theme",
+  settingsLanguage: "Language",
+  colorPalette: "Color palette",
+  uiStyle: "UI style",
+  uiStyleHint: "The entire app switches to the selected visual style.",
+  customAccent: "Pick your accent color",
+  custom: "Custom",
+  durations: "Durations (minutes)",
+  focusDuration: "Focus",
+  shortBreak: "Short break",
+  longBreak: "Long break",
+  longBreakInterval: "Long break interval",
+  preferences: "Preferences",
+  autoStart: "Auto-start",
+  sound: "Sound",
+  soundType: "Sound type",
+  notifications: "Notifications",
+  localStorageTitle: "Local storage.",
+  localStorageBody:
+    "Tasks, habits, session logs and preferences are stored in localStorage on your device.",
+  uiNeo: "Neomorphism",
+  uiNeoDesc: "Dark surface, soft embossed shadows",
+  uiGlass: "Glassmorphism",
+  uiGlassDesc: "Frosted glass, blur and transparency",
+  uiClay: "Claymorphism",
+  uiClayDesc: "Chunky soft 3D clay blocks",
+  uiSkeuo: "Skeuomorphism",
+  uiSkeuoDesc: "Metallic, glossy realistic hardware",
+  uiLiquid: "Liquid Glass",
+  uiLiquidDesc: "Fluid glass with specular shine",
+  uiFlat: "Flat Design",
+  uiFlatDesc: "Solid colors, shadowless and crisp",
+  themeMode: "Theme mode",
+  themeSystem: "System",
+  themeLight: "Light",
+  themeDark: "Dark",
+  habitProgress: "Today's progress",
+  addHabit: "Add new habit",
+  newHabit: "New habit",
+  habitPlaceholder: "e.g. Drink water, meditate 10 min...",
+  weeklyTarget: "Weekly target",
+  daysPerWeek: "{n} days / week",
+  noHabits: "No habits yet",
+  noHabitsHint: "Small steps, big changes. Add your first habit!",
+  thisWeek: "This week",
+  weekProgress: "{done}/{target} days",
+  last7Days: "Last 7 days — tap to toggle",
+  last4Weeks: "Last 4 weeks",
+  statsToday: "Today's Summary",
+  statsCompleted: "Completed Today",
+  statsSessions: "focus sessions",
+  statsTotalTime: "Total Time",
+  statsFocusMinutes: "minutes of focus",
+  statsHabitsToday: "Habits — Today",
+  statsWeekChart: "Last 7 Days",
+  statsHeatmap: "Activity Heatmap",
+  statsByTask: "Task Breakdown",
+  statsRecent: "Recent Sessions",
+  statsNoSessions: "No sessions logged yet.",
+  generalFocus: "General Focus",
+  done: "Done",
+  soundChime: "Melodic Chime",
+  soundDigital: "Digital Beep",
+  soundBird: "Bird Chirp",
+  soundGong: "Classic Gong",
+  themeOcean: "Ocean",
+  themeTomato: "Tomato",
+  themeForest: "Forest",
+  themeViolet: "Violet",
+  themeAmber: "Amber",
+  themeRose: "Rose",
+  privacyNote:
+    "All settings and statistics stay on your device — nothing is sent to a server.",
+  minutesShort: "min",
+  start: "Start",
+  pause: "Pause",
+  resume: "Resume",
+  reset: "Reset",
+  skip: "Skip",
+  skipTitle: "Skip to next phase",
+  mainNav: "Main navigation",
+  streakDays: "{n} days",
+  bestStreakLabel: "Best {n}",
+  totalCompletionsLabel: "{n} total",
+  confirmDeleteHabit: 'Delete "{title}"?',
+  confirmDeleteTask: 'Delete "{title}"?',
+  confirmDeleteSession: "Delete the session from {time}?",
+  unknownDate: "Unknown date",
+  deletedTask: "Deleted task",
+  habitsDoneOf: "done",
+  heatmapLow: "Less",
+  heatmapHigh: "More",
+  sessionsCount: "{n} sessions",
+  deleteRecord: "Delete record",
+  dataSection: "Data",
+  exportData: "Export",
+  importData: "Import",
+  resetData: "Delete all",
+  exportHint:
+    "Download a JSON backup. Importing overwrites data on this device.",
+  confirmReset:
+    "This will erase tasks, habits, stats and settings. Continue?",
+  importError: "Invalid backup file.",
+  goodAfternoon: "Good afternoon",
+  goodEvening: "Good evening",
+  goodNight: "Good night",
+  notifyFocusTitle: "Focus done!",
+  notifyFocusBody: "Time for a break.",
+  notifyShortTitle: "Short break over!",
+  notifyShortBody: "Back to focus.",
+  notifyLongTitle: "Long break over!",
+  notifyLongBody: "Ready for another focus session?",
+  estimatedPomos: "Estimated pomodoros",
+  valueLabel: "Value",
+  increase: "Increase",
+  decrease: "Decrease",
+  selectPlaceholder: "Select",
+};
+
+export type MessageKey = keyof typeof tr;
+
+const catalogs = { tr, en } as const;
+
+export function translate(
+  locale: LocaleId,
+  key: MessageKey,
+  params?: Record<string, string | number>,
+): string {
+  const catalog = catalogs[locale] ?? catalogs.tr;
+  let text: string = catalog[key] ?? catalogs.tr[key] ?? key;
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      text = text.replace(`{${k}}`, String(v));
+    }
+  }
+  return text;
+}
+
+export function themeLabel(locale: LocaleId, themeId: string): string {
+  const map: Record<string, MessageKey> = {
+    ocean: "themeOcean",
+    tomato: "themeTomato",
+    forest: "themeForest",
+    violet: "themeViolet",
+    amber: "themeAmber",
+    rose: "themeRose",
+    custom: "custom",
+  };
+  const key = map[themeId];
+  return key ? translate(locale, key) : themeId;
+}
+
+export function uiStyleLabel(locale: LocaleId, style: string): string {
+  const map: Record<string, MessageKey> = {
+    neo: "uiNeo",
+    glass: "uiGlass",
+    clay: "uiClay",
+    skeuo: "uiSkeuo",
+    liquid: "uiLiquid",
+    flat: "uiFlat",
+  };
+  const key = map[style];
+  return key ? translate(locale, key) : style;
+}
+
+export function uiStyleDesc(locale: LocaleId, style: string): string {
+  const map: Record<string, MessageKey> = {
+    neo: "uiNeoDesc",
+    glass: "uiGlassDesc",
+    clay: "uiClayDesc",
+    skeuo: "uiSkeuoDesc",
+    liquid: "uiLiquidDesc",
+    flat: "uiFlatDesc",
+  };
+  const key = map[style];
+  return key ? translate(locale, key) : "";
+}
+
+export function phaseLabel(
+  locale: LocaleId,
+  phase: "focus" | "shortBreak" | "longBreak",
+): string {
+  const map = {
+    focus: "phaseFocus",
+    shortBreak: "phaseShortBreak",
+    longBreak: "phaseLongBreak",
+  } as const;
+  return translate(locale, map[phase]);
+}
+
+export function getPhaseMessage(
+  locale: LocaleId,
+  phase: "focus" | "shortBreak" | "longBreak",
+): { title: string; body: string } {
+  if (phase === "focus") {
+    return {
+      title: translate(locale, "notifyFocusTitle"),
+      body: translate(locale, "notifyFocusBody"),
+    };
+  }
+  if (phase === "shortBreak") {
+    return {
+      title: translate(locale, "notifyShortTitle"),
+      body: translate(locale, "notifyShortBody"),
+    };
+  }
+  return {
+    title: translate(locale, "notifyLongTitle"),
+    body: translate(locale, "notifyLongBody"),
+  };
+}
+
+export function greetingKey(date = new Date()): MessageKey {
+  const h = date.getHours();
+  if (h < 5 || h >= 22) return "goodNight";
+  if (h < 12) return "goodMorning";
+  if (h < 18) return "goodAfternoon";
+  return "goodEvening";
+}

@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Neo Pomodoro",
+    "slug": "easy-pomodoro",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": { "supportsTablet": true },
+    "android": {
+      "package": "com.easypomodoro.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#e8eef8"
+      }
+    }
+  }
+}

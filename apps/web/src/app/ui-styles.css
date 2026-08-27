@@ -1,0 +1,1710 @@
+/* ═══════════════════════════════════════════════════════════════
+   UI STYLE SYSTEM — her stil tüm uygulamayı belirgin şekilde değiştirir
+   html[data-ui-style="…"] üzerinden token + bileşen override
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Ortak hedef sınıfları ── */
+:root {
+  --ui-targets: "";
+}
+
+/* ═══ NEO — klasik soft neomorphism ═══ */
+:root,
+[data-ui-style="neo"] {
+  --ui-blur: 0px;
+  --ui-saturate: 1;
+  --ui-font-weight: 400;
+  --ui-heading-weight: 700;
+  --ui-letter-spacing: -0.01em;
+
+  --ui-surface-bg: var(--neo-bg);
+  --ui-surface-border: 1px solid transparent;
+  --ui-radius-lg: 1.25rem;
+  --ui-radius-md: 1rem;
+  --ui-radius-sm: 0.75rem;
+  --ui-radius-pill: 9999px;
+  --ui-radius-nav: 28px 28px 0 0;
+
+  --ui-shadow-surface:
+    12px 12px 24px var(--neo-dark), -10px -10px 22px var(--neo-light);
+  --ui-shadow-surface-sm:
+    8px 8px 16px var(--neo-dark-sm), -6px -6px 14px var(--neo-light-sm);
+  --ui-shadow-inset:
+    inset 6px 6px 12px var(--neo-dark-sm),
+    inset -5px -5px 10px var(--neo-light-sm);
+  --ui-shadow-inset-sm:
+    inset 4px 4px 8px var(--neo-dark-sm),
+    inset -3px -3px 6px var(--neo-light-sm);
+  --ui-shadow-btn:
+    6px 6px 14px var(--neo-dark-sm), -5px -5px 12px var(--neo-light-sm);
+  --ui-shadow-btn-hover:
+    8px 8px 18px var(--neo-dark-sm), -6px -6px 14px var(--neo-light);
+  --ui-shadow-btn-active:
+    inset 5px 5px 10px var(--neo-dark-sm),
+    inset -3px -3px 6px var(--neo-light-sm);
+  --ui-shadow-primary:
+    6px 6px 16px var(--neo-accent-dark), -4px -4px 12px var(--neo-accent-glow),
+    inset 0 1px 0 var(--highlight-soft);
+  --ui-shadow-primary-hover:
+    8px 8px 20px var(--neo-accent-dark), -5px -5px 14px var(--neo-accent-glow),
+    inset 0 1px 0 var(--highlight);
+  --ui-shadow-primary-active:
+    inset 5px 5px 12px var(--neo-accent-dark),
+    inset -2px -2px 6px var(--neo-accent-glow);
+
+  --ui-primary-bg: linear-gradient(150deg, var(--accent-hover), var(--accent));
+  --ui-nav-bg: var(--neo-bg);
+  --ui-nav-shadow: 0 -10px 30px var(--neo-dark), inset 0 1px 0 var(--highlight-soft);
+  --ui-sidebar-bg: var(--neo-bg);
+  --ui-sidebar-shadow: 10px 0 28px var(--neo-dark);
+  --ui-timer-outer-bg: var(--neo-bg);
+  --ui-timer-outer-shadow:
+    20px 20px 40px var(--neo-dark), -18px -18px 34px var(--neo-light),
+    inset 0 1px 0 var(--highlight-soft);
+  --ui-timer-inner-bg: var(--neo-bg);
+  --ui-timer-inner-shadow:
+    inset 13px 13px 26px var(--neo-dark),
+    inset -11px -11px 22px var(--neo-light);
+  --ui-track-stroke: color-mix(in srgb, var(--neo-dark) 40%, var(--neo-bg));
+  --ui-progress-filter: drop-shadow(0 0 8px var(--neo-accent-glow));
+  --ui-pill-track-bg: var(--neo-bg);
+  --ui-pill-track-shadow:
+    inset 5px 5px 10px var(--neo-dark-sm),
+    inset -4px -4px 8px var(--neo-light-sm);
+  --ui-pill-active-bg: linear-gradient(
+    145deg,
+    var(--accent-hover),
+    var(--accent)
+  );
+  --ui-pill-active-shadow:
+    5px 5px 12px var(--neo-accent-dark), inset 0 1px 0 var(--highlight-soft);
+  --ui-input-bg: var(--neo-bg);
+  --ui-input-shadow:
+    inset 5px 5px 10px var(--neo-dark-sm),
+    inset -4px -4px 8px var(--neo-light-sm);
+  --ui-input-focus-shadow:
+    inset 6px 6px 12px var(--neo-dark-sm),
+    inset -4px -4px 8px var(--neo-light-sm),
+    0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+  --ui-progress-track-bg: var(--neo-bg);
+  --ui-progress-track-shadow:
+    inset 4px 4px 8px var(--neo-dark-sm),
+    inset -3px -3px 6px var(--neo-light-sm);
+  --ui-icon-shadow:
+    5px 5px 12px var(--neo-dark-sm), -4px -4px 10px var(--neo-light-sm);
+  --ui-nav-active-shadow:
+    6px 6px 14px var(--neo-dark-sm), -5px -5px 12px var(--neo-light-sm);
+  --ui-sidebar-active-shadow: var(--neo-inset-shadow);
+  --ui-mesh-opacity: 0;
+  --ambient-opacity: 0.12;
+  --ui-card-hover-lift: translateY(-4px);
+}
+
+[data-ui-style="neo"] body::before {
+  content: none;
+}
+
+/* ═══ GLASS — buzlu cam, blur, mesh arka plan ═══ */
+[data-ui-style="glass"] {
+  --ui-blur: 22px;
+  --ui-saturate: 1.45;
+  --ui-font-weight: 450;
+  --ui-heading-weight: 650;
+  --ui-letter-spacing: 0.01em;
+
+  --ui-surface-bg: var(--card);
+  --ui-surface-border: 1px solid var(--glass-border);
+  --ui-radius-lg: 1.5rem;
+  --ui-radius-md: 1.25rem;
+  --ui-radius-sm: 1rem;
+  --ui-radius-nav: 32px 32px 0 0;
+
+  --ui-shadow-surface:
+    0 16px 48px var(--shade), inset 0 1px 0 var(--highlight);
+  --ui-shadow-surface-sm:
+    0 10px 28px var(--shade), inset 0 1px 0 var(--highlight-soft);
+  --ui-shadow-inset: inset 0 2px 10px var(--shade);
+  --ui-shadow-inset-sm: inset 0 2px 6px var(--shade);
+  --ui-shadow-btn:
+    0 8px 24px var(--shade), inset 0 1px 0 var(--highlight);
+  --ui-shadow-btn-hover:
+    0 14px 36px var(--shade-strong), inset 0 1px 0 var(--highlight);
+  --ui-shadow-btn-active: inset 0 3px 10px var(--shade);
+  --ui-shadow-primary:
+    0 12px 32px var(--neo-accent-dark), inset 0 1px 0 var(--highlight);
+  --ui-shadow-primary-hover:
+    0 16px 40px var(--neo-accent-dark), inset 0 1px 0 var(--highlight);
+  --ui-shadow-primary-active: inset 0 4px 12px var(--shade-strong);
+
+  --ui-primary-bg: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-hover) 85%, white),
+    var(--accent)
+  );
+  --ui-nav-bg: var(--glass-bg);
+  --ui-nav-shadow:
+    0 -12px 40px var(--shade), inset 0 1px 0 var(--highlight);
+  --ui-sidebar-bg: var(--glass-bg);
+  --ui-sidebar-shadow: 12px 0 40px var(--shade);
+  --ui-timer-outer-bg: var(--glass-bg);
+  --ui-timer-outer-shadow:
+    0 20px 56px var(--shade), inset 0 1px 0 var(--highlight);
+  --ui-timer-inner-bg: color-mix(in srgb, var(--glass-bg) 70%, transparent);
+  --ui-timer-inner-shadow: inset 0 3px 14px var(--shade);
+  --ui-track-stroke: color-mix(in srgb, var(--foreground) 18%, transparent);
+  --ui-progress-filter: drop-shadow(0 0 10px var(--neo-accent-glow));
+  --ui-pill-track-bg: var(--input-bg);
+  --ui-pill-track-shadow: inset 0 2px 8px var(--shade);
+  --ui-pill-active-bg: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-hover) 90%, white),
+    var(--accent)
+  );
+  --ui-pill-active-shadow:
+    0 8px 24px var(--neo-accent-dark), inset 0 1px 0 var(--highlight);
+  --ui-input-bg: var(--input-bg);
+  --ui-input-shadow: inset 0 2px 8px var(--shade);
+  --ui-input-focus-shadow:
+    inset 0 2px 8px var(--shade),
+    0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
+  --ui-progress-track-bg: var(--input-bg);
+  --ui-progress-track-shadow: inset 0 2px 6px var(--shade);
+  --ui-icon-shadow:
+    0 6px 18px var(--shade), inset 0 1px 0 var(--highlight-soft);
+  --ui-nav-active-shadow:
+    0 6px 18px var(--shade), inset 0 1px 0 var(--highlight);
+  --ui-sidebar-active-shadow: inset 0 2px 8px var(--shade);
+  --ui-mesh-opacity: 1;
+  --ambient-opacity: 0.22;
+  --ui-card-hover-lift: translateY(-6px);
+}
+
+[data-ui-style="glass"] body {
+  background: linear-gradient(
+    135deg,
+    var(--bg-grad-0),
+    var(--bg-grad-2)
+  ) !important;
+}
+
+[data-ui-style="glass"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 1;
+  background:
+    radial-gradient(
+      ellipse 90% 70% at 15% 20%,
+      color-mix(in srgb, var(--accent) 45%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 80% 60% at 85% 75%,
+      color-mix(in srgb, var(--phase-long) 40%, transparent),
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 50% 100%,
+      color-mix(in srgb, var(--phase-short) 35%, transparent),
+      transparent 55%
+    );
+}
+
+[data-theme="dark"][data-ui-style="glass"] body::before {
+  background:
+    radial-gradient(
+      ellipse 90% 70% at 12% 18%,
+      color-mix(in srgb, var(--accent) 62%, transparent),
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse 80% 60% at 88% 78%,
+      color-mix(in srgb, var(--phase-long) 50%, transparent),
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse 55% 45% at 48% 100%,
+      color-mix(in srgb, var(--phase-short) 42%, transparent),
+      transparent 52%
+    );
+}
+
+/* ═══ CLAY — kabartmalı, pastel, kalın alt gölge ═══ */
+[data-ui-style="clay"] {
+  --ui-blur: 0px;
+  --ui-saturate: 1;
+  --ui-font-weight: 500;
+  --ui-heading-weight: 800;
+  --ui-letter-spacing: 0;
+
+  --ui-surface-bg: var(--card);
+  --ui-surface-border: 2px solid
+    color-mix(in srgb, var(--neo-light) 55%, var(--neo-bg));
+  --ui-radius-lg: 2rem;
+  --ui-radius-md: 1.5rem;
+  --ui-radius-sm: 1.125rem;
+  --ui-radius-nav: 36px 36px 0 0;
+
+  --ui-shadow-surface:
+    0 12px 0 color-mix(in srgb, var(--neo-dark) 70%, transparent),
+    0 18px 36px var(--shade);
+  --ui-shadow-surface-sm:
+    0 8px 0 color-mix(in srgb, var(--neo-dark) 55%, transparent),
+    0 12px 24px var(--shade);
+  --ui-shadow-inset: inset 0 4px 12px
+    color-mix(in srgb, var(--neo-dark) 30%, transparent);
+  --ui-shadow-inset-sm: inset 0 3px 8px
+    color-mix(in srgb, var(--neo-dark) 22%, transparent);
+  --ui-shadow-btn:
+    0 8px 0 color-mix(in srgb, var(--neo-dark) 65%, transparent),
+    0 10px 20px var(--shade);
+  --ui-shadow-btn-hover:
+    0 9px 0 color-mix(in srgb, var(--neo-dark) 70%, transparent),
+    0 14px 28px var(--shade);
+  --ui-shadow-btn-active:
+    0 3px 0 color-mix(in srgb, var(--neo-dark) 65%, transparent),
+    inset 0 3px 6px var(--shade);
+  --ui-shadow-primary:
+    0 10px 0 color-mix(in srgb, var(--accent) 55%, black),
+    0 14px 28px var(--neo-accent-dark);
+  --ui-shadow-primary-hover:
+    0 11px 0 color-mix(in srgb, var(--accent) 50%, black),
+    0 18px 32px var(--neo-accent-dark);
+  --ui-shadow-primary-active: 0 3px 0
+    color-mix(in srgb, var(--accent) 55%, black);
+
+  --ui-primary-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-hover) 90%, white),
+    var(--accent)
+  );
+  --ui-nav-bg: color-mix(in srgb, var(--neo-light) 24%, var(--neo-bg));
+  --ui-nav-shadow:
+    0 -10px 0 color-mix(in srgb, var(--neo-dark) 50%, transparent),
+    0 -4px 20px var(--shade);
+  --ui-sidebar-bg: color-mix(in srgb, var(--neo-light) 22%, var(--neo-bg));
+  --ui-sidebar-shadow: 8px 0 0
+    color-mix(in srgb, var(--neo-dark) 40%, transparent);
+  --ui-timer-outer-bg: color-mix(in srgb, var(--neo-light) 32%, var(--neo-bg));
+  --ui-timer-outer-shadow:
+    0 14px 0 color-mix(in srgb, var(--neo-dark) 60%, transparent),
+    0 20px 40px var(--shade);
+  --ui-timer-inner-bg: color-mix(in srgb, var(--neo-light) 16%, var(--neo-bg));
+  --ui-timer-inner-shadow: inset 0 6px 16px
+    color-mix(in srgb, var(--neo-dark) 25%, transparent);
+  --ui-track-stroke: color-mix(in srgb, var(--neo-dark) 25%, var(--neo-bg));
+  --ui-progress-filter: none;
+  --ui-pill-track-bg: color-mix(in srgb, var(--neo-dark) 8%, var(--neo-bg));
+  --ui-pill-track-shadow: inset 0 4px 10px
+    color-mix(in srgb, var(--neo-dark) 20%, transparent);
+  --ui-pill-active-bg: linear-gradient(
+    180deg,
+    var(--accent-hover),
+    var(--accent)
+  );
+  --ui-pill-active-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 50%, black);
+  --ui-input-bg: color-mix(in srgb, var(--neo-dark) 12%, var(--neo-bg));
+  --ui-input-shadow: inset 0 4px 10px
+    color-mix(in srgb, var(--neo-dark) 24%, transparent);
+  --ui-input-focus-shadow:
+    inset 0 4px 10px color-mix(in srgb, var(--neo-dark) 22%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+  --ui-progress-track-bg: color-mix(
+    in srgb,
+    var(--neo-dark) 10%,
+    var(--neo-bg)
+  );
+  --ui-progress-track-shadow: inset 0 3px 8px
+    color-mix(in srgb, var(--neo-dark) 18%, transparent);
+  --ui-icon-shadow: 0 5px 0 color-mix(in srgb, var(--neo-dark) 50%, transparent);
+  --ui-nav-active-shadow: 0 5px 0
+    color-mix(in srgb, var(--neo-dark) 45%, transparent);
+  --ui-sidebar-active-shadow: inset 0 4px 10px
+    color-mix(in srgb, var(--neo-dark) 20%, transparent);
+  --ui-mesh-opacity: 0;
+  --ambient-opacity: 0.04;
+  --ui-card-hover-lift: translateY(-2px);
+}
+
+[data-ui-style="clay"] body {
+  background: linear-gradient(
+    180deg,
+    var(--bg-grad-0),
+    var(--bg-grad-2)
+  ) !important;
+}
+
+[data-ui-style="clay"] body::before {
+  content: none;
+}
+
+[data-ui-style="clay"] .neo-btn:active,
+[data-ui-style="clay"] .neo-btn-primary:active {
+  transform: translateY(4px);
+}
+
+/* ═══ SKEUO — bevel, metal, derin gölgeler ═══ */
+[data-ui-style="skeuo"] {
+  --ui-blur: 0px;
+  --ui-saturate: 1;
+  --ui-font-weight: 500;
+  --ui-heading-weight: 700;
+  --ui-letter-spacing: 0.02em;
+
+  --ui-surface-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-light) 55%, var(--neo-bg)) 0%,
+    color-mix(in srgb, var(--neo-light) 18%, var(--neo-bg)) 38%,
+    var(--neo-bg) 58%,
+    color-mix(in srgb, var(--neo-dark) 38%, var(--neo-bg)) 100%
+  );
+  --ui-surface-border: 1px solid
+    color-mix(in srgb, var(--neo-dark) 62%, var(--border));
+  --ui-radius-lg: 0.625rem;
+  --ui-radius-md: 0.5rem;
+  --ui-radius-sm: 0.375rem;
+  --ui-radius-nav: 12px 12px 0 0;
+
+  --ui-shadow-surface:
+    inset 0 1px 0 color-mix(in srgb, var(--neo-light) 95%, transparent),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.22),
+    0 1px 0 color-mix(in srgb, var(--neo-light) 70%, transparent),
+    0 6px 14px rgba(0, 0, 0, 0.28), 0 12px 28px rgba(15, 23, 42, 0.18);
+  --ui-shadow-surface-sm:
+    inset 0 1px 0 color-mix(in srgb, var(--neo-light) 90%, transparent),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.18),
+    0 1px 0 color-mix(in srgb, var(--neo-light) 55%, transparent),
+    0 4px 10px rgba(0, 0, 0, 0.22);
+  --ui-shadow-inset:
+    inset 0 5px 12px rgba(0, 0, 0, 0.32), inset 0 1px 2px rgba(0, 0, 0, 0.18),
+    inset 0 -1px 0 color-mix(in srgb, var(--neo-light) 18%, transparent);
+  --ui-shadow-inset-sm:
+    inset 0 4px 9px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(0, 0, 0, 0.12);
+  --ui-shadow-btn:
+    inset 0 2px 0 color-mix(in srgb, var(--neo-light) 95%, transparent),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.14),
+    0 1px 0 color-mix(in srgb, var(--neo-light) 60%, transparent),
+    0 4px 8px rgba(0, 0, 0, 0.24);
+  --ui-shadow-btn-hover:
+    inset 0 2px 0 color-mix(in srgb, var(--neo-light) 100%, transparent),
+    0 6px 12px rgba(0, 0, 0, 0.28);
+  --ui-shadow-btn-active:
+    inset 0 4px 10px rgba(0, 0, 0, 0.32),
+    inset 0 -1px 0 color-mix(in srgb, var(--neo-light) 12%, transparent);
+  --ui-shadow-primary:
+    inset 0 2px 0 var(--highlight),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.22),
+    0 3px 0 color-mix(in srgb, var(--accent) 52%, black),
+    0 8px 18px var(--neo-accent-dark);
+  --ui-shadow-primary-hover:
+    inset 0 2px 0 var(--highlight),
+    0 4px 0 color-mix(in srgb, var(--accent) 52%, black),
+    0 10px 22px var(--neo-accent-dark);
+  --ui-shadow-primary-active:
+    inset 0 5px 12px rgba(0, 0, 0, 0.35),
+    0 1px 0 color-mix(in srgb, var(--accent) 45%, black);
+
+  --ui-primary-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-hover) 82%, var(--neo-light)) 0%,
+    var(--accent) 48%,
+    color-mix(in srgb, var(--accent) 68%, black) 100%
+  );
+  --ui-nav-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-light) 22%, var(--neo-bg)),
+    var(--neo-bg)
+  );
+  --ui-nav-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--neo-light) 55%, transparent),
+    0 -4px 16px rgba(0, 0, 0, 0.22);
+  --ui-sidebar-bg: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--neo-light) 14%, var(--neo-bg)),
+    var(--neo-bg)
+  );
+  --ui-sidebar-shadow:
+    4px 0 16px rgba(0, 0, 0, 0.28), inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  --ui-timer-outer-bg: radial-gradient(
+    circle at 50% 28%,
+    color-mix(in srgb, var(--neo-light) 42%, var(--neo-bg)) 0%,
+    var(--neo-bg) 52%,
+    color-mix(in srgb, var(--neo-dark) 48%, var(--neo-bg)) 100%
+  );
+  --ui-timer-outer-shadow:
+    inset 0 3px 0 color-mix(in srgb, var(--neo-light) 80%, transparent),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.28), 0 10px 22px rgba(0, 0, 0, 0.38),
+    0 2px 0 color-mix(in srgb, var(--neo-light) 45%, transparent);
+  --ui-timer-inner-bg: radial-gradient(
+    circle at 50% 32%,
+    color-mix(in srgb, var(--neo-light) 28%, var(--neo-bg)) 0%,
+    var(--neo-bg) 58%,
+    color-mix(in srgb, var(--neo-dark) 35%, var(--neo-bg)) 100%
+  );
+  --ui-timer-inner-shadow:
+    inset 0 6px 14px rgba(0, 0, 0, 0.34),
+    inset 0 -2px 4px color-mix(in srgb, var(--neo-light) 22%, transparent);
+  --ui-track-stroke: color-mix(in srgb, var(--neo-dark) 62%, var(--neo-bg));
+  --ui-progress-filter: drop-shadow(
+      0 0 6px color-mix(in srgb, var(--accent) 75%, transparent)
+    )
+    drop-shadow(0 0 2px var(--accent));
+  --ui-pill-track-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-dark) 16%, var(--neo-bg)),
+    var(--neo-bg)
+  );
+  --ui-pill-track-shadow:
+    inset 0 4px 10px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(0, 0, 0, 0.12),
+    0 1px 0 color-mix(in srgb, var(--neo-light) 40%, transparent);
+  --ui-pill-active-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-hover) 78%, var(--neo-light)),
+    var(--accent) 52%,
+    color-mix(in srgb, var(--accent) 72%, black)
+  );
+  --ui-pill-active-shadow:
+    inset 0 2px 0 var(--highlight),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.22),
+    0 2px 0 color-mix(in srgb, var(--accent) 50%, black),
+    0 4px 8px rgba(0, 0, 0, 0.22);
+  --ui-input-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-dark) 14%, var(--neo-bg)),
+    color-mix(in srgb, var(--neo-dark) 6%, var(--neo-bg))
+  );
+  --ui-input-shadow:
+    inset 0 5px 12px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(0, 0, 0, 0.14);
+  --ui-input-focus-shadow:
+    inset 0 5px 12px rgba(0, 0, 0, 0.3), 0 0 0 2px var(--accent),
+    0 0 12px color-mix(in srgb, var(--accent) 35%, transparent);
+  --ui-progress-track-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-dark) 14%, var(--neo-bg)),
+    var(--neo-bg)
+  );
+  --ui-progress-track-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.24);
+  --ui-icon-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--neo-light) 85%, transparent),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.22);
+  --ui-nav-active-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--neo-light) 75%, transparent),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+  --ui-sidebar-active-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.22);
+  --ui-mesh-opacity: 0;
+  --ambient-opacity: 0.03;
+  --ui-card-hover-lift: translateY(-1px);
+}
+
+[data-ui-style="skeuo"] body {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--neo-light) 12%, var(--bg-grad-0)),
+      var(--bg-grad-2)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      color-mix(in srgb, var(--neo-dark) 6%, transparent) 3px,
+      color-mix(in srgb, var(--neo-dark) 6%, transparent) 4px
+    ) !important;
+}
+
+[data-ui-style="skeuo"] body::before {
+  content: none;
+}
+
+/* ═══ LIQUID GLASS — akışkan, speküler, blur ═══ */
+[data-ui-style="liquid"] {
+  --ui-blur: 40px;
+  --ui-saturate: 1.7;
+  --ui-font-weight: 450;
+  --ui-heading-weight: 650;
+  --ui-letter-spacing: 0.015em;
+
+  --ui-surface-bg: var(--card);
+  --ui-surface-border: 1px solid var(--glass-border);
+  --ui-radius-lg: 2rem;
+  --ui-radius-md: 1.625rem;
+  --ui-radius-sm: 1.25rem;
+  --ui-radius-nav: 40px 40px 0 0;
+
+  --ui-shadow-surface:
+    0 20px 56px var(--shade), inset 0 1px 1px var(--highlight);
+  --ui-shadow-surface-sm:
+    0 12px 36px var(--shade), inset 0 1px 0 var(--highlight);
+  --ui-shadow-inset: inset 0 3px 12px var(--shade);
+  --ui-shadow-inset-sm: inset 0 2px 8px var(--shade);
+  --ui-shadow-btn:
+    0 12px 36px var(--shade), inset 0 1px 1px var(--highlight);
+  --ui-shadow-btn-hover:
+    0 18px 48px var(--shade-strong), inset 0 1px 1px var(--highlight);
+  --ui-shadow-btn-active: inset 0 3px 12px var(--shade);
+  --ui-shadow-primary:
+    0 14px 44px var(--neo-accent-dark),
+    0 0 36px color-mix(in srgb, var(--accent) 28%, transparent),
+    inset 0 1px 1px var(--highlight);
+  --ui-shadow-primary-hover:
+    0 18px 52px var(--neo-accent-dark),
+    0 0 44px color-mix(in srgb, var(--accent) 34%, transparent);
+  --ui-shadow-primary-active: inset 0 4px 14px var(--shade-strong);
+
+  --ui-primary-bg: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-hover) 85%, white),
+    var(--accent) 40%,
+    color-mix(in srgb, var(--phase-long) 70%, var(--accent)) 100%
+  );
+  --ui-nav-bg: var(--glass-bg);
+  --ui-nav-shadow:
+    0 -16px 48px var(--shade), inset 0 1px 0 var(--highlight-soft);
+  --ui-sidebar-bg: var(--glass-bg);
+  --ui-sidebar-shadow: 16px 0 48px var(--shade);
+  --ui-timer-outer-bg: var(--glass-bg);
+  --ui-timer-outer-shadow:
+    0 24px 64px var(--shade), inset 0 1px 1px var(--highlight),
+    0 0 48px color-mix(in srgb, var(--accent) 18%, transparent);
+  --ui-timer-inner-bg: color-mix(in srgb, var(--glass-bg) 55%, transparent);
+  --ui-timer-inner-shadow: inset 0 2px 12px var(--shade);
+  --ui-track-stroke: color-mix(in srgb, var(--foreground) 16%, transparent);
+  --ui-progress-filter: drop-shadow(0 0 14px var(--neo-accent-glow));
+  --ui-pill-track-bg: var(--input-bg);
+  --ui-pill-track-shadow: inset 0 2px 10px var(--shade);
+  --ui-pill-active-bg: linear-gradient(
+    135deg,
+    var(--accent-hover),
+    var(--phase-long)
+  );
+  --ui-pill-active-shadow:
+    0 8px 28px var(--neo-accent-dark),
+    0 0 20px color-mix(in srgb, var(--accent) 28%, transparent);
+  --ui-input-bg: var(--input-bg);
+  --ui-input-shadow: inset 0 2px 10px var(--shade);
+  --ui-input-focus-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 40%, transparent),
+    0 0 20px color-mix(in srgb, var(--accent) 22%, transparent);
+  --ui-progress-track-bg: var(--input-bg);
+  --ui-progress-track-shadow: inset 0 2px 8px var(--shade);
+  --ui-icon-shadow:
+    0 8px 24px var(--shade), inset 0 1px 0 var(--highlight-soft);
+  --ui-nav-active-shadow:
+    0 0 20px color-mix(in srgb, var(--accent) 22%, transparent),
+    inset 0 1px 0 var(--highlight-soft);
+  --ui-sidebar-active-shadow:
+    inset 0 2px 10px var(--shade),
+    0 0 16px color-mix(in srgb, var(--accent) 14%, transparent);
+  --ui-mesh-opacity: 1;
+  --ambient-opacity: 0.28;
+  --ui-card-hover-lift: translateY(-8px);
+}
+
+[data-ui-style="liquid"] body {
+  background: linear-gradient(
+    145deg,
+    var(--bg-grad-0),
+    var(--bg-grad-2)
+  ) !important;
+}
+
+[data-ui-style="liquid"] body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 70% 60% at 25% 15%,
+      color-mix(in srgb, var(--accent) 55%, transparent),
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 65% 55% at 78% 68%,
+      color-mix(in srgb, var(--phase-short) 50%, transparent),
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse 50% 45% at 52% 42%,
+      color-mix(in srgb, var(--phase-long) 45%, transparent),
+      transparent 55%
+    );
+  animation: liquid-mesh-drift 20s ease-in-out infinite alternate;
+}
+
+@keyframes liquid-mesh-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(3%, 2%) scale(1.05);
+  }
+}
+
+[data-ui-style="liquid"] .neo-btn-primary {
+  background-size: 200% 200%;
+  animation: liquid-shimmer 5s ease infinite;
+}
+
+@keyframes liquid-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+[data-ui-style="liquid"] .neo-progress-fill {
+  box-shadow:
+    0 0 16px var(--neo-accent-glow),
+    0 0 32px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* ═══ FLAT — düz renkler, gölgesiz, net kenarlar ═══ */
+[data-ui-style="flat"] {
+  --ui-blur: 0px;
+  --ui-saturate: 1;
+  --ui-font-weight: 450;
+  --ui-heading-weight: 700;
+  --ui-letter-spacing: 0;
+
+  --ui-surface-bg: var(--neo-bg);
+  --ui-surface-border: 1px solid var(--border);
+  --ui-radius-lg: 1rem;
+  --ui-radius-md: 0.75rem;
+  --ui-radius-sm: 0.5rem;
+  --ui-radius-pill: 9999px;
+  --ui-radius-nav: 0 0 0 0;
+
+  --ui-shadow-surface: none;
+  --ui-shadow-surface-sm: none;
+  --ui-shadow-inset: none;
+  --ui-shadow-inset-sm: none;
+  --ui-shadow-btn: none;
+  --ui-shadow-btn-hover: none;
+  --ui-shadow-btn-active: none;
+  --ui-shadow-primary: none;
+  --ui-shadow-primary-hover: none;
+  --ui-shadow-primary-active: none;
+
+  --ui-primary-bg: var(--accent);
+  --ui-nav-bg: var(--neo-bg);
+  --ui-nav-shadow: 0 -1px 0 var(--border);
+  --ui-sidebar-bg: var(--neo-bg);
+  --ui-sidebar-shadow: 1px 0 0 var(--border);
+  --ui-timer-outer-bg: transparent;
+  --ui-timer-outer-shadow: none;
+  --ui-timer-inner-bg: transparent;
+  --ui-timer-inner-shadow: none;
+  --ui-track-stroke: color-mix(in srgb, var(--accent) 18%, var(--border));
+  --ui-progress-filter: none;
+  --ui-pill-track-bg: color-mix(in srgb, var(--accent) 8%, var(--neo-bg));
+  --ui-pill-track-shadow: none;
+  --ui-pill-active-bg: var(--accent);
+  --ui-pill-active-shadow: none;
+  --ui-input-bg: var(--neo-bg);
+  --ui-input-shadow: none;
+  --ui-input-focus-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--accent) 45%, transparent);
+  --ui-progress-track-bg: color-mix(in srgb, var(--accent) 12%, var(--neo-bg));
+  --ui-progress-track-shadow: none;
+  --ui-icon-shadow: none;
+  --ui-nav-active-shadow: none;
+  --ui-sidebar-active-shadow: none;
+  --ui-mesh-opacity: 0;
+  --ambient-opacity: 0.05;
+  --ui-card-hover-lift: translateY(-2px);
+}
+
+[data-ui-style="flat"] body {
+  background: var(--bg-grad-1) !important;
+}
+
+[data-ui-style="flat"] body::before {
+  content: none;
+}
+
+[data-ui-style="flat"] .task-row.task-active {
+  box-shadow: none;
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--ui-surface-bg));
+}
+
+[data-ui-style="flat"] .neo-icon-btn {
+  background: color-mix(in srgb, var(--accent) 8%, var(--neo-bg));
+  border: 1px solid var(--border);
+}
+
+[data-ui-style="flat"] .neo-icon-btn:hover {
+  background: color-mix(in srgb, var(--accent) 14%, var(--neo-bg));
+}
+
+[data-ui-style="flat"] .timer-ring .progress {
+  stroke-linecap: butt;
+}
+
+[data-ui-style="flat"] .stat-card::after {
+  display: none;
+}
+
+/* ═══ SKEUO bileşen detayları — metalik donanım, oluk, LED ilerleme ═══ */
+
+[data-ui-style="skeuo"] .neo-timer-outer {
+  background: radial-gradient(
+    circle at 50% 26%,
+    color-mix(in srgb, var(--neo-light) 52%, var(--neo-bg)) 0%,
+    var(--neo-bg) 42%,
+    color-mix(in srgb, var(--neo-dark) 58%, var(--neo-bg)) 76%,
+    var(--neo-dark) 100%
+  ) !important;
+  box-shadow:
+    inset 0 3px 0 color-mix(in srgb, var(--neo-light) 75%, transparent),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.34),
+    0 14px 28px rgba(0, 0, 0, 0.42),
+    0 2px 0 color-mix(in srgb, var(--neo-light) 40%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--neo-dark) 70%, var(--neo-bg)) !important;
+}
+
+/* İlerleme halkasının oturduğu oluk */
+[data-ui-style="skeuo"] .neo-timer-outer::before {
+  content: "";
+  position: absolute;
+  inset: 7%;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 5px 14px rgba(0, 0, 0, 0.52),
+    inset 0 -3px 6px color-mix(in srgb, var(--neo-light) 16%, transparent);
+  z-index: 1;
+  pointer-events: none;
+}
+
+[data-ui-style="skeuo"] .neo-timer-inner {
+  background: radial-gradient(
+    circle at 50% 30%,
+    color-mix(in srgb, var(--neo-light) 38%, var(--neo-bg)) 0%,
+    var(--neo-bg) 54%,
+    color-mix(in srgb, var(--neo-dark) 42%, var(--neo-bg)) 100%
+  ) !important;
+  box-shadow:
+    inset 0 6px 12px rgba(0, 0, 0, 0.32),
+    inset 0 -2px 4px color-mix(in srgb, var(--neo-light) 45%, transparent) !important;
+  z-index: 3;
+}
+
+[data-ui-style="skeuo"] .timer-ring {
+  z-index: 2;
+}
+
+[data-ui-style="skeuo"] .timer-ring .track {
+  stroke: color-mix(in srgb, var(--neo-dark) 68%, var(--neo-bg));
+  opacity: 1;
+}
+
+[data-ui-style="skeuo"] .timer-ring .progress {
+  filter: var(--ui-progress-filter);
+}
+
+[data-ui-style="skeuo"] .timer-display {
+  text-shadow:
+    0 1px 0 color-mix(in srgb, var(--neo-light) 90%, transparent),
+    0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* Faz sekmeleri — gömülü ray + yükseltilmiş aktif düğme */
+[data-ui-style="skeuo"] .neo-pill-track {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-dark) 18%, var(--neo-bg)),
+    var(--neo-bg)
+  ) !important;
+  box-shadow:
+    inset 0 4px 11px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(0, 0, 0, 0.14),
+    0 1px 0 color-mix(in srgb, var(--neo-light) 42%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--neo-dark) 48%, var(--neo-bg)) !important;
+}
+
+[data-ui-style="skeuo"] .neo-pill-active {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-hover) 80%, var(--neo-light)) 0%,
+    var(--accent) 50%,
+    color-mix(in srgb, var(--accent) 68%, black) 100%
+  ) !important;
+  box-shadow:
+    inset 0 2px 0 var(--highlight),
+    inset 0 -3px 7px rgba(0, 0, 0, 0.24),
+    0 2px 0 color-mix(in srgb, var(--accent) 52%, black),
+    0 5px 10px rgba(0, 0, 0, 0.22) !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, black) !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+[data-ui-style="skeuo"] .neo-pill-item {
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--neo-light) 50%, transparent);
+}
+
+[data-ui-style="skeuo"] .neo-btn-primary {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-hover) 78%, var(--neo-light)) 0%,
+    var(--accent) 50%,
+    color-mix(in srgb, var(--accent) 66%, black) 100%
+  ) !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 58%, black) !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+[data-ui-style="skeuo"] .neo-btn-primary:active {
+  transform: translateY(2px);
+}
+
+[data-ui-style="skeuo"] .neo-btn:not(.neo-btn-primary) {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-light) 52%, var(--neo-bg)) 0%,
+    var(--neo-bg) 52%,
+    color-mix(in srgb, var(--neo-dark) 32%, var(--neo-bg)) 100%
+  ) !important;
+}
+
+[data-ui-style="skeuo"] .neo-control-group {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-dark) 14%, var(--neo-bg)),
+    var(--neo-bg)
+  ) !important;
+  box-shadow:
+    inset 0 3px 9px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid color-mix(in srgb, var(--neo-dark) 42%, var(--neo-bg)) !important;
+}
+
+[data-ui-style="skeuo"] .neo-icon-btn,
+[data-ui-style="skeuo"] .quick-icon {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-light) 58%, var(--neo-bg)) 0%,
+    var(--neo-bg) 50%,
+    color-mix(in srgb, var(--neo-dark) 38%, var(--neo-bg)) 100%
+  ) !important;
+  border: 1px solid color-mix(in srgb, var(--neo-dark) 65%, var(--neo-bg)) !important;
+}
+
+[data-ui-style="skeuo"] .neo-control-group .neo-icon-btn {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-light) 48%, var(--neo-bg)) 0%,
+    color-mix(in srgb, var(--neo-dark) 22%, var(--neo-bg)) 100%
+  ) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--neo-light) 70%, transparent),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.18) !important;
+}
+
+[data-ui-style="skeuo"] .neo-stepper,
+[data-ui-style="skeuo"] .neo-stepper-pill,
+[data-ui-style="skeuo"] .neo-select-trigger {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-light) 50%, var(--neo-bg)) 0%,
+    var(--neo-bg) 55%,
+    color-mix(in srgb, var(--neo-dark) 30%, var(--neo-bg)) 100%
+  ) !important;
+  border: 1px solid color-mix(in srgb, var(--neo-dark) 62%, var(--neo-bg)) !important;
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--neo-light) 75%, transparent),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.16),
+    0 3px 7px rgba(0, 0, 0, 0.26) !important;
+}
+
+[data-ui-style="skeuo"] .neo-stepper-pill .neo-stepper-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+[data-ui-style="skeuo"]
+  .neo-stepper-pill
+  .neo-stepper-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 12%, var(--neo-bg)) !important;
+}
+
+[data-ui-style="skeuo"] .neo-stepper-btn:active:not(:disabled),
+[data-ui-style="skeuo"] .neo-stepper-arrow:active:not(:disabled) {
+  box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.32) !important;
+}
+
+[data-ui-style="skeuo"] .neo-input,
+[data-ui-style="skeuo"] .task-empty {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-dark) 16%, var(--neo-bg)),
+    color-mix(in srgb, var(--neo-dark) 8%, var(--neo-bg))
+  ) !important;
+  box-shadow:
+    inset 0 5px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(0, 0, 0, 0.14) !important;
+  border: 1px solid color-mix(in srgb, var(--neo-dark) 52%, var(--neo-bg)) !important;
+}
+
+[data-ui-style="skeuo"] .neo-inset-sm,
+[data-ui-style="skeuo"] .task-check-btn:not(.task-check-btn-done) {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-dark) 12%, var(--neo-bg)),
+    color-mix(in srgb, var(--neo-dark) 6%, var(--neo-bg))
+  ) !important;
+  box-shadow:
+    inset 0 4px 9px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid color-mix(in srgb, var(--neo-dark) 45%, var(--neo-bg)) !important;
+}
+
+[data-ui-style="skeuo"] .neo-nav {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--neo-light) 18%, var(--neo-bg)),
+    var(--neo-bg)
+  ) !important;
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--neo-light) 55%, transparent),
+    0 -6px 18px rgba(0, 0, 0, 0.24) !important;
+  border-top: 1px solid color-mix(in srgb, var(--neo-dark) 35%, var(--neo-bg)) !important;
+}
+
+[data-ui-style="skeuo"] .pomo-dot.filled {
+  box-shadow:
+    inset 0 1px 0 var(--highlight-soft),
+    0 0 8px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 2px 4px rgba(0, 0, 0, 0.22);
+}
+
+/* Skeuo: fırçalanmış metal mikro doku */
+[data-ui-style="skeuo"] .neo-surface,
+[data-ui-style="skeuo"] .pomodoro-tasks-col,
+[data-ui-style="skeuo"] .stat-card,
+[data-ui-style="skeuo"] .active-task-card {
+  background-image:
+    var(--ui-surface-bg),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 2px,
+      color-mix(in srgb, var(--neo-dark) 7%, transparent) 2px,
+      color-mix(in srgb, var(--neo-dark) 7%, transparent) 3px
+    );
+}
+
+/* ═══ CLAY bileşen detayları — şişkin, yumuşak kil ═══ */
+[data-ui-style="clay"] .neo-timer-outer {
+  box-shadow:
+    0 16px 0 var(--neo-dark),
+    0 24px 46px var(--shade),
+    inset 0 -10px 16px color-mix(in srgb, var(--accent) 16%, transparent),
+    inset 0 10px 16px color-mix(in srgb, var(--neo-light) 70%, var(--neo-bg)) !important;
+}
+
+[data-ui-style="clay"] .neo-icon-btn,
+[data-ui-style="clay"] .quick-icon {
+  box-shadow:
+    0 6px 0 var(--neo-dark),
+    inset 0 4px 8px color-mix(in srgb, var(--neo-light) 65%, var(--neo-bg)) !important;
+}
+
+/* ═══ GLOBAL TYPOGRAPHY PER STYLE ═══ */
+body {
+  font-weight: var(--ui-font-weight);
+  letter-spacing: var(--ui-letter-spacing);
+}
+
+.page-title,
+.stat-value,
+.timer-display {
+  font-weight: var(--ui-heading-weight);
+}
+
+/* ═══ SURFACE TARGETS — tüm kartlar & paneller ═══ */
+.neo-surface,
+.neo-surface-sm,
+.neo-inset,
+.neo-inset-sm,
+.neo-btn:not(.neo-btn-primary),
+.neo-input,
+.neo-nav,
+.neo-select-trigger,
+.neo-select-menu,
+.neo-stepper,
+.neo-stepper-pill,
+.neo-pill-track,
+.neo-control-group,
+.neo-badge,
+.task-empty,
+.neo-icon-btn,
+.quick-icon,
+.hero-orb,
+.desktop-sidebar,
+.desktop-sidebar .logo,
+.neo-timer-outer,
+.neo-timer-inner,
+.pomodoro-view-tabs,
+.active-task-card,
+.stat-card,
+.quick-card,
+.language-btn,
+.privacy-chip {
+  background: var(--ui-surface-bg);
+  backdrop-filter: blur(var(--ui-blur)) saturate(var(--ui-saturate));
+  -webkit-backdrop-filter: blur(var(--ui-blur)) saturate(var(--ui-saturate));
+  border: var(--ui-surface-border);
+  transition:
+    background 0.45s ease,
+    box-shadow 0.45s ease,
+    backdrop-filter 0.45s ease,
+    border-color 0.45s ease,
+    border-radius 0.45s ease,
+    transform 0.25s ease;
+}
+
+.neo-surface,
+.stat-card,
+.active-task-card,
+.quick-card {
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-surface);
+}
+
+.neo-surface-sm,
+.task-empty,
+.language-btn,
+.privacy-chip {
+  border-radius: var(--ui-radius-md);
+  box-shadow: var(--ui-shadow-surface-sm);
+}
+
+.task-row {
+  background: var(--ui-input-bg);
+  box-shadow: var(--ui-shadow-inset-sm);
+  border: var(--ui-surface-border);
+  border-radius: var(--ui-radius-md);
+  backdrop-filter: blur(var(--ui-blur)) saturate(var(--ui-saturate));
+  -webkit-backdrop-filter: blur(var(--ui-blur)) saturate(var(--ui-saturate));
+}
+
+.task-row.task-active {
+  box-shadow:
+    var(--ui-shadow-inset-sm),
+    inset 0 0 0 2px var(--accent);
+}
+
+.neo-inset,
+.pomodoro-view-tabs,
+.neo-pill-track,
+.neo-progress-track,
+.neo-control-group {
+  border-radius: var(--ui-radius-pill);
+  box-shadow: var(--ui-pill-track-shadow);
+  background: var(--ui-pill-track-bg);
+  border: none;
+}
+
+.neo-inset:not(.neo-pill-track):not(.pomodoro-view-tabs):not(
+    .neo-progress-track
+  ):not(.neo-control-group) {
+  border-radius: var(--ui-radius-md);
+  box-shadow: var(--ui-shadow-inset);
+  background: var(--ui-input-bg);
+}
+
+.neo-inset-sm {
+  border-radius: var(--ui-radius-sm);
+  box-shadow: var(--ui-shadow-inset-sm);
+  background: var(--ui-input-bg);
+  border: none;
+}
+
+.neo-btn:not(.neo-btn-primary) {
+  box-shadow: var(--ui-shadow-btn);
+}
+
+.neo-btn:not(.neo-btn-primary):hover {
+  box-shadow: var(--ui-shadow-btn-hover);
+}
+
+.neo-btn:not(.neo-btn-primary):active {
+  box-shadow: var(--ui-shadow-btn-active);
+}
+
+.neo-btn-primary {
+  background: var(--ui-primary-bg);
+  box-shadow: var(--ui-shadow-primary);
+}
+
+.neo-btn-primary:hover {
+  box-shadow: var(--ui-shadow-primary-hover);
+}
+
+.neo-btn-primary:active {
+  box-shadow: var(--ui-shadow-primary-active);
+}
+
+.neo-pill-active {
+  background: var(--ui-pill-active-bg) !important;
+  box-shadow: var(--ui-pill-active-shadow) !important;
+  border: var(--ui-surface-border, 1px solid transparent);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.neo-input {
+  background: var(--ui-input-bg);
+  box-shadow: var(--ui-input-shadow);
+  border-radius: var(--ui-radius-sm);
+  border: var(--ui-surface-border);
+}
+
+.neo-input:focus {
+  box-shadow: var(--ui-input-focus-shadow);
+}
+
+.neo-nav {
+  background: var(--ui-nav-bg);
+  box-shadow: var(--ui-nav-shadow);
+  border-radius: var(--ui-radius-nav);
+  border: var(--ui-surface-border);
+  border-bottom: none;
+}
+
+.nav-item.active {
+  background: var(--ui-surface-bg);
+  box-shadow: var(--ui-nav-active-shadow);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: var(--ui-radius-sm);
+}
+
+/* Aktif durumda layout kaymasını önle — şeffaf kenarlık tabanı */
+.theme-mode-btn,
+.language-btn {
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+
+.theme-mode-btn.active,
+.language-btn.active {
+  border-color: var(--accent);
+}
+
+.neo-timer-outer {
+  background: var(--ui-timer-outer-bg);
+  box-shadow: var(--ui-timer-outer-shadow);
+  border: var(--ui-surface-border);
+}
+
+.neo-timer-inner {
+  background: var(--ui-timer-inner-bg);
+  box-shadow: var(--ui-timer-inner-shadow);
+}
+
+.timer-ring .track {
+  stroke: var(--ui-track-stroke);
+}
+
+.timer-ring .progress {
+  filter: var(--ui-progress-filter);
+}
+
+.neo-progress-track {
+  background: var(--ui-progress-track-bg);
+  box-shadow: var(--ui-progress-track-shadow);
+}
+
+.neo-stepper {
+  border-radius: var(--ui-radius-sm);
+  box-shadow: var(--ui-shadow-inset);
+  background: var(--ui-input-bg);
+}
+
+.neo-stepper-pill {
+  border-radius: var(--ui-radius-pill);
+  box-shadow: var(--ui-shadow-surface-sm);
+  background: var(--ui-surface-bg);
+  border: none;
+}
+
+.task-add-form .neo-stepper-pill,
+.task-edit-row .neo-stepper-pill {
+  box-shadow: var(--ui-shadow-inset-sm);
+  background: var(--ui-input-bg);
+}
+
+.neo-stepper-pill .neo-stepper-btn {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+.neo-stepper-pill .neo-stepper-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.neo-stepper-pill .neo-stepper-btn:active:not(:disabled) {
+  box-shadow: var(--ui-shadow-btn-active);
+}
+
+.neo-select-trigger {
+  background: var(--ui-input-bg);
+  box-shadow: var(--ui-input-shadow);
+  border-radius: var(--ui-radius-sm);
+  border: var(--ui-surface-border);
+}
+
+.neo-select-trigger:hover {
+  box-shadow: var(--ui-input-focus-shadow);
+}
+
+.neo-select-trigger[aria-expanded="true"] {
+  box-shadow: var(--ui-input-focus-shadow);
+}
+
+.neo-select-menu {
+  border-radius: var(--ui-radius-md);
+  box-shadow:
+    var(--ui-shadow-surface),
+    0 16px 40px var(--shade);
+}
+
+.neo-select-option.selected {
+  background: var(--ui-pill-active-bg);
+  box-shadow: var(--ui-pill-active-shadow);
+  border-radius: var(--ui-radius-sm);
+}
+
+.neo-badge {
+  border-radius: var(--ui-radius-pill);
+  box-shadow: var(--ui-shadow-surface-sm);
+  background: var(--ui-surface-bg);
+  border: var(--ui-surface-border);
+}
+
+.neo-control-group .neo-icon-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 10%, var(--ui-surface-bg));
+  box-shadow: var(--ui-shadow-btn);
+}
+
+.quick-icon {
+  background: var(--ui-input-bg);
+  box-shadow: var(--ui-shadow-inset-sm);
+  border: var(--ui-surface-border);
+}
+
+.pomo-dot:not(.filled) {
+  background: var(--ui-progress-track-bg);
+  box-shadow: var(--ui-progress-track-shadow);
+}
+
+.pomo-dot.filled {
+  box-shadow: var(--ui-pill-active-shadow);
+}
+
+.theme-swatch-dot {
+  box-shadow: var(--ui-shadow-surface-sm);
+  border: var(--ui-surface-border);
+}
+
+.theme-custom-row input[type="color"] {
+  border-radius: var(--ui-radius-sm);
+  box-shadow: var(--ui-input-shadow);
+  border: var(--ui-surface-border);
+}
+
+.pomodoro-tasks-col.neo-surface {
+  border-radius: var(--ui-radius-lg);
+}
+
+.habit-heatmap-empty {
+  background: var(--ui-input-bg);
+  box-shadow: var(--ui-shadow-inset-sm);
+}
+
+.habit-heatmap-done {
+  background: var(--ui-pill-active-bg);
+  box-shadow: var(--ui-pill-active-shadow);
+}
+
+.neo-icon-btn {
+  box-shadow: var(--ui-icon-shadow);
+}
+
+.quick-card:hover {
+  transform: var(--ui-card-hover-lift);
+}
+
+@media (min-width: 1024px) {
+  .desktop-sidebar {
+    background: var(--ui-sidebar-bg);
+    box-shadow: var(--ui-sidebar-shadow);
+    border-right: var(--ui-surface-border);
+  }
+
+  .sidebar-link.active {
+    background: var(--ui-surface-bg);
+    box-shadow: var(--ui-sidebar-active-shadow);
+    border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: var(--ui-radius-sm);
+  }
+}
+
+[data-ui-style="glass"] .neo-surface,
+[data-ui-style="liquid"] .neo-surface,
+[data-ui-style="glass"] .stat-card,
+[data-ui-style="liquid"] .stat-card,
+[data-ui-style="glass"] .quick-card,
+[data-ui-style="liquid"] .quick-card,
+[data-ui-style="glass"] .active-task-card,
+[data-ui-style="liquid"] .active-task-card,
+[data-ui-style="glass"] .pomodoro-tasks-col,
+[data-ui-style="liquid"] .pomodoro-tasks-col {
+  isolation: isolate;
+}
+
+[data-theme="dark"][data-ui-style="flat"] .nav-item.active,
+[data-theme="dark"][data-ui-style="flat"] .sidebar-link.active {
+  background: color-mix(in srgb, var(--accent) 22%, transparent) !important;
+}
+
+[data-theme="dark"] .neo-badge-highlight {
+  color: #4ade80;
+}
+[data-ui-style="glass"] .desktop-sidebar,
+[data-ui-style="liquid"] .desktop-sidebar,
+[data-ui-style="glass"] .neo-nav,
+[data-ui-style="liquid"] .neo-nav {
+  backdrop-filter: blur(calc(var(--ui-blur) + 8px)) saturate(var(--ui-saturate));
+  -webkit-backdrop-filter: blur(calc(var(--ui-blur) + 8px))
+    saturate(var(--ui-saturate));
+}
+
+[data-ui-style="glass"] .stat-card::after,
+[data-ui-style="liquid"] .stat-card::after {
+  opacity: 0.35;
+}
+
+[data-ui-style="liquid"] .glow-aura,
+[data-ui-style="liquid"] .ambient-orb {
+  opacity: calc(var(--ambient-opacity) * 1.4);
+  filter: blur(100px) saturate(1.5);
+}
+
+/* Clay: kartlara hafif bounce */
+[data-ui-style="clay"] .quick-card:hover,
+[data-ui-style="clay"] .neo-btn-primary:hover,
+[data-ui-style="clay"] .stat-card:hover {
+  transform: translateY(-3px);
+}
+
+[data-ui-style="clay"] .neo-btn-primary:active,
+[data-ui-style="clay"] .neo-btn:active {
+  transform: translateY(4px);
+}
+
+
+[data-ui-style="clay"]
+  .neo-stepper-pill
+  .neo-stepper-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: var(--ui-shadow-btn-active);
+}
+
+/* Skeuo: keskin köşeler her yerde */
+[data-ui-style="skeuo"] .neo-btn,
+[data-ui-style="skeuo"] .neo-btn-primary,
+[data-ui-style="skeuo"] .neo-pill-active,
+[data-ui-style="skeuo"] .neo-pill-item {
+  border-radius: 0.375rem !important;
+}
+[data-ui-style="skeuo"] .neo-surface,
+[data-ui-style="skeuo"] .neo-surface-sm,
+[data-ui-style="skeuo"] .task-row,
+[data-ui-style="skeuo"] .stat-card,
+[data-ui-style="skeuo"] .quick-card,
+[data-ui-style="skeuo"] .neo-input,
+[data-ui-style="skeuo"] .neo-stepper,
+[data-ui-style="skeuo"] .neo-nav,
+[data-ui-style="skeuo"] .sidebar-link {
+  border-radius: 0.5rem !important;
+}
+
+[data-ui-style="skeuo"] .neo-timer-outer,
+[data-ui-style="skeuo"] .neo-timer-inner,
+[data-ui-style="skeuo"] .neo-icon-btn,
+[data-ui-style="skeuo"] .hero-orb,
+[data-ui-style="skeuo"] .theme-swatch-dot,
+[data-ui-style="skeuo"] .pomo-dot {
+  border-radius: 50% !important;
+}
+
+[data-ui-style="skeuo"] .neo-pill-track,
+[data-ui-style="skeuo"] .pomodoro-view-tabs,
+[data-ui-style="skeuo"] .neo-control-group,
+[data-ui-style="skeuo"] .neo-progress-track {
+  border-radius: 0.375rem !important;
+}
+
+/* Liquid: timer glow ring */
+[data-ui-style="liquid"] .neo-timer-outer {
+  animation: liquid-timer-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes liquid-timer-glow {
+  0% {
+    box-shadow: var(--ui-timer-outer-shadow);
+  }
+  100% {
+    box-shadow:
+      var(--ui-timer-outer-shadow),
+      0 0 80px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+}
+
+/* ── Settings UI style previews (standalone) ── */
+.ui-style-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+  .ui-style-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .ui-style-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+.ui-style-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 0.625rem;
+  border-radius: var(--ui-radius-md, 1rem);
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: none;
+  box-sizing: border-box;
+  min-height: 7.5rem;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ui-style-card:hover {
+  transform: translateY(-3px);
+}
+
+.ui-style-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.ui-style-preview {
+  height: 4rem;
+  border-radius: 0.875rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ui-style-card-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--foreground);
+  line-height: 1.2;
+}
+
+.ui-style-card-desc {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--muted);
+  line-height: 1.35;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .ui-style-card-desc {
+    display: block;
+  }
+}
+
+.ui-preview-neo {
+  background: var(--neo-bg);
+  box-shadow:
+    6px 6px 12px var(--neo-dark),
+    -6px -6px 12px var(--neo-light);
+  border-radius: 1rem;
+}
+
+.ui-preview-neo::after {
+  content: "";
+  position: absolute;
+  inset: 30% 32%;
+  border-radius: 9999px;
+  background: var(--accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.ui-preview-glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 8px 32px var(--shade),
+    inset 0 2px 0 var(--highlight);
+  backdrop-filter: blur(16px);
+  border-radius: 1.25rem;
+}
+
+.ui-preview-clay {
+  background: color-mix(in srgb, var(--accent) 14%, var(--card));
+  border-radius: 1.5rem;
+}
+
+.ui-preview-clay::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--accent) 8%, var(--card));
+  box-shadow:
+    0 6px 0 var(--neo-dark),
+    inset 0 4px 8px var(--highlight-soft);
+}
+
+.ui-preview-skeuo {
+  background: radial-gradient(
+    circle at 50% 30%,
+    color-mix(in srgb, var(--neo-light) 70%, var(--neo-bg)) 0%,
+    var(--neo-bg) 45%,
+    color-mix(in srgb, var(--neo-dark) 55%, var(--neo-bg)) 78%,
+    var(--neo-dark) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--neo-dark) 70%, var(--border));
+  border-radius: 50%;
+  box-shadow:
+    inset 0 3px 4px var(--highlight),
+    inset 0 -6px 10px var(--shade-strong),
+    0 6px 14px var(--shade);
+}
+
+.ui-preview-skeuo::after {
+  content: "";
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 26%;
+  border-radius: 9999px;
+  background: var(--accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.ui-preview-flat {
+  background: var(--accent);
+  border-radius: 0.5rem;
+}
+
+.ui-preview-flat::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 22%;
+  height: 8px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--foreground) 88%, transparent);
+}
+
+.ui-preview-liquid {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 12px 40px var(--shade),
+    inset 0 2px 2px var(--highlight),
+    0 0 30px color-mix(in srgb, var(--accent) 25%, transparent);
+  backdrop-filter: blur(20px) saturate(1.8);
+}
+
+.theme-mode-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.theme-mode-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--foreground) 80%, var(--muted));
+  cursor: pointer;
+  min-height: 2.75rem;
+  box-sizing: border-box;
+}
+
+.theme-mode-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow:
+    var(--ui-shadow-surface-sm),
+    0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.language-row {
+  display: flex;
+  gap: 0.625rem;
+}
+
+.language-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--foreground) 80%, var(--muted));
+  cursor: pointer;
+  min-height: 2.75rem;
+  box-sizing: border-box;
+}
+
+.language-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow:
+    var(--ui-shadow-surface-sm),
+    0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-style="liquid"] body::before,
+  [data-ui-style="liquid"] .neo-btn-primary,
+  [data-ui-style="liquid"] .neo-timer-outer {
+    animation: none;
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "Neo Pomodoro",
+  "short_name": "Pomodoro",
+  "description": "Neo ve cam efektli pomodoro zamanlayıcı — görevler, alışkanlıklar ve istatistikler tamamen cihazınızda.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#e8eef8",
+  "theme_color": "#2563eb",
+  "orientation": "any",
+  "lang": "tr",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities", "lifestyle"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

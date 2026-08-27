@@ -1,0 +1,28 @@
+{
+  "name": "easy-pomodoro",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @easy-pomodoro/web",
+    "build": "npm run build -w @easy-pomodoro/web",
+    "start": "npm run start -w @easy-pomodoro/web",
+    "lint": "npm run lint -w @easy-pomodoro/web",
+    "mobile": "npm run start -w @easy-pomodoro/mobile",
+    "android": "npm run android -w @easy-pomodoro/mobile",
+    "desktop": "node apps/desktop/dev.cjs",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
+  },
+  "overrides": {
+    "@types/react": "19.2.15"
+  },
+  "allowScripts": {
+    "electron@37.10.3": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true
+  }
+}
