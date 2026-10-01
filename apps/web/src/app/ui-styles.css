@@ -1062,12 +1062,13 @@ body {
   backdrop-filter: blur(var(--ui-blur)) saturate(var(--ui-saturate));
   -webkit-backdrop-filter: blur(var(--ui-blur)) saturate(var(--ui-saturate));
   border: var(--ui-surface-border);
+  /* Hover / press only. Theme switches are handled atomically by
+     runThemeSwitch() (view transition + .theme-switching), because
+     gradients, inset shadows and backdrop-filter cannot interpolate. */
   transition:
-    background 0.45s ease,
-    box-shadow 0.45s ease,
-    backdrop-filter 0.45s ease,
-    border-color 0.45s ease,
-    border-radius 0.45s ease,
+    box-shadow 0.25s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
     transform 0.25s ease;
 }
 
@@ -1325,6 +1326,12 @@ body {
   border-radius: var(--ui-radius-lg);
 }
 
+.stats-bar {
+  background: var(--ui-pill-active-bg);
+  box-shadow: var(--ui-pill-active-shadow);
+  transition: height 0.5s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
 .habit-heatmap-empty {
   background: var(--ui-input-bg);
   box-shadow: var(--ui-shadow-inset-sm);
@@ -1473,20 +1480,10 @@ body {
 /* ── Settings UI style previews (standalone) ── */
 .ui-style-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Sized by the settings panel, not the viewport: the old 6-column
+     desktop breakpoint squeezed the cards until their labels overlapped. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 8.5rem), 1fr));
   gap: 0.75rem;
-}
-
-@media (min-width: 480px) {
-  .ui-style-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 900px) {
-  .ui-style-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
 }
 
 .ui-style-card {
@@ -1530,6 +1527,7 @@ body {
   font-weight: 800;
   color: var(--foreground);
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .ui-style-card-desc {
@@ -1546,103 +1544,205 @@ body {
   }
 }
 
+/* Previews are self-contained mini scenes: each one always shows *its*
+   style (tinted by the current accent), whatever style is active now. */
+.ui-style-preview {
+  --pv-bg: #e8eef8;
+  --pv-hi: #ffffff;
+  --pv-lo: #b8c4d8;
+  --pv-ink: #1e3a5f;
+  isolation: isolate;
+}
+
+[data-theme="dark"] .ui-style-preview {
+  --pv-bg: #262d3b;
+  --pv-hi: #343e52;
+  --pv-lo: #12161f;
+  --pv-ink: #e6edf8;
+}
+
+.ui-style-preview::before,
+.ui-style-preview::after {
+  content: "";
+  position: absolute;
+}
+
+/* Neo — soft extrusion on a matching canvas */
 .ui-preview-neo {
-  background: var(--neo-bg);
-  box-shadow:
-    6px 6px 12px var(--neo-dark),
-    -6px -6px 12px var(--neo-light);
+  background: var(--pv-bg);
   border-radius: 1rem;
+}
+
+.ui-preview-neo::before {
+  inset: 22% 18%;
+  border-radius: 0.875rem;
+  background: var(--pv-bg);
+  box-shadow:
+    6px 6px 12px var(--pv-lo),
+    -6px -6px 12px var(--pv-hi);
 }
 
 .ui-preview-neo::after {
-  content: "";
-  position: absolute;
-  inset: 30% 32%;
+  left: 30%;
+  right: 30%;
+  top: 42%;
+  height: 16%;
   border-radius: 9999px;
   background: var(--accent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
-.ui-preview-glass {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow:
-    0 8px 32px var(--shade),
-    inset 0 2px 0 var(--highlight);
-  backdrop-filter: blur(16px);
-  border-radius: 1.25rem;
-}
-
+/* Clay — puffy pastel tile with a thick bottom shadow */
 .ui-preview-clay {
-  background: color-mix(in srgb, var(--accent) 14%, var(--card));
+  background: color-mix(in srgb, var(--accent) 16%, var(--pv-bg));
   border-radius: 1.5rem;
 }
 
-.ui-preview-clay::after {
-  content: "";
-  position: absolute;
-  inset: 22%;
+.ui-preview-clay::before {
+  inset: 20% 20% 26%;
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--accent) 8%, var(--card));
+  background: color-mix(in srgb, var(--accent) 8%, var(--pv-hi));
   box-shadow:
-    0 6px 0 var(--neo-dark),
-    inset 0 4px 8px var(--highlight-soft);
+    0 7px 0 color-mix(in srgb, var(--accent) 30%, var(--pv-lo)),
+    inset 0 5px 8px color-mix(in srgb, var(--pv-hi) 80%, transparent);
 }
 
+/* Skeuo — brushed-metal dial with a lit indicator */
 .ui-preview-skeuo {
-  background: radial-gradient(
-    circle at 50% 30%,
-    color-mix(in srgb, var(--neo-light) 70%, var(--neo-bg)) 0%,
-    var(--neo-bg) 45%,
-    color-mix(in srgb, var(--neo-dark) 55%, var(--neo-bg)) 78%,
-    var(--neo-dark) 100%
-  );
-  border: 1px solid color-mix(in srgb, var(--neo-dark) 70%, var(--border));
+  background: linear-gradient(180deg, #c9ccd1, #a9adb4);
+  border-radius: 0.5rem;
+  border: 1px solid #8a8f97;
+}
+
+[data-theme="dark"] .ui-preview-skeuo {
+  background: linear-gradient(180deg, #3a3e44, #24272b);
+  border-color: #16181b;
+}
+
+.ui-preview-skeuo::before {
+  left: 50%;
+  top: 50%;
+  width: 3.1rem;
+  height: 3.1rem;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 28%,
+    #ffffff 0%,
+    #d7dade 45%,
+    #8f949c 100%
+  );
+  border: 1px solid #7e848c;
   box-shadow:
-    inset 0 3px 4px var(--highlight),
-    inset 0 -6px 10px var(--shade-strong),
-    0 6px 14px var(--shade);
+    inset 0 2px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -4px 7px rgba(0, 0, 0, 0.28),
+    0 4px 9px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .ui-preview-skeuo::before {
+  background: radial-gradient(
+    circle at 50% 28%,
+    #6d7480 0%,
+    #3a3e44 50%,
+    #1b1d21 100%
+  );
+  border-color: #101113;
+  box-shadow:
+    inset 0 2px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -4px 7px rgba(0, 0, 0, 0.5),
+    0 4px 9px rgba(0, 0, 0, 0.55);
 }
 
 .ui-preview-skeuo::after {
-  content: "";
-  position: absolute;
-  top: 18%;
   left: 50%;
-  transform: translateX(-50%);
+  top: calc(50% - 1.35rem);
   width: 3px;
-  height: 26%;
+  height: 0.85rem;
+  transform: translateX(-50%);
   border-radius: 9999px;
   background: var(--accent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 75%, transparent);
 }
 
+/* Flat — solid colour, no depth */
 .ui-preview-flat {
   background: var(--accent);
   border-radius: 0.5rem;
 }
 
 .ui-preview-flat::after {
-  content: "";
-  position: absolute;
   left: 14%;
   right: 14%;
   bottom: 22%;
   height: 8px;
   border-radius: 2px;
-  background: color-mix(in srgb, var(--foreground) 88%, transparent);
+  background: color-mix(in srgb, #ffffff 88%, transparent);
+}
+
+/* Glass / Liquid — a frosted pane over colourful light pools */
+.ui-preview-glass,
+.ui-preview-liquid {
+  background:
+    radial-gradient(
+      circle at 18% 22%,
+      color-mix(in srgb, var(--accent) 80%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 88% 82%,
+      color-mix(in srgb, var(--phase-long) 75%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 70% 8%,
+      color-mix(in srgb, var(--phase-short) 65%, transparent),
+      transparent 50%
+    ),
+    var(--pv-bg);
+  border-radius: 1.25rem;
+}
+
+.ui-preview-glass::after,
+.ui-preview-liquid::after {
+  inset: 20% 14%;
+  border-radius: 0.875rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.62),
+    rgba(255, 255, 255, 0.2)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px) saturate(1.5);
+  -webkit-backdrop-filter: blur(10px) saturate(1.5);
+}
+
+[data-theme="dark"] .ui-preview-glass::after,
+[data-theme="dark"] .ui-preview-liquid::after {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.05)
+  );
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .ui-preview-liquid {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 1.5rem;
+  border-radius: 1.6rem;
+}
+
+.ui-preview-liquid::after {
+  inset: 18% 12%;
+  border-radius: 9999px;
   box-shadow:
-    0 12px 40px var(--shade),
-    inset 0 2px 2px var(--highlight),
-    0 0 30px color-mix(in srgb, var(--accent) 25%, transparent);
-  backdrop-filter: blur(20px) saturate(1.8);
+    0 10px 22px rgba(15, 23, 42, 0.2),
+    0 0 22px color-mix(in srgb, var(--accent) 35%, transparent),
+    inset 0 2px 2px rgba(255, 255, 255, 0.85);
 }
 
 .theme-mode-row {

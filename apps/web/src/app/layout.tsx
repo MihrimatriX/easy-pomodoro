@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { APP_HIGHLIGHTS, APP_NAME } from "@shared/app-copy";
 import { getSiteUrl, SEO } from "@/lib/seo";
+import { THEME_BOOT_SCRIPT } from "@/lib/theme-boot";
 import { Providers } from "@/components/Providers";
 import { RegisterSW } from "@/components/RegisterSW";
 import "./globals.css";
@@ -121,9 +122,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html
+      lang="tr"
+      // Font variables live on <html> so :root tokens (--font-sans,
+      // --font-mono-timer) can resolve them; on <body> they were undefined
+      // at :root and every font silently fell back to the system UI font.
+      className={`${plusJakarta.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Restores the last theme before first paint (no default-theme flash). */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body
-        className={`${plusJakarta.variable} ${jetbrainsMono.variable} min-h-dvh antialiased`}
+        className="min-h-dvh antialiased"
       >
         <script
           type="application/ld+json"

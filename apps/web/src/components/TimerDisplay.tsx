@@ -13,12 +13,15 @@ type TimerDisplayProps = {
   progress: number;
   pomodoroCount: number;
   longBreakInterval: number;
+};
+
+type ActiveTaskCardProps = {
   tasks: Task[];
   activeTaskId: string | null;
   onSelectActive: (id: string | null) => void;
   onToggleTask: (id: string) => void;
   completedPomodoros: number;
-  hideActiveTaskOnDesktop?: boolean;
+  className?: string;
 };
 
 const PHASE_CLASS: Record<Phase, string> = {
@@ -33,20 +36,12 @@ export function TimerDisplay({
   progress,
   pomodoroCount,
   longBreakInterval,
-  tasks,
-  activeTaskId,
-  onSelectActive,
-  onToggleTask,
-  completedPomodoros,
-  hideActiveTaskOnDesktop = false,
 }: TimerDisplayProps) {
   const t = useT();
   const locale = useLocale();
   const radius = 118;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - progress);
-  const activeTask = tasks.find((task) => task.id === activeTaskId) || null;
-  const estimated = activeTask?.estimatedPomodoros ?? 0;
   const sessionCurrent = pomodoroCount % longBreakInterval;
 
   return (
@@ -80,96 +75,66 @@ export function TimerDisplay({
           total: longBreakInterval,
         })}
       </p>
+    </div>
+  );
+}
 
-      <div
-        className={`active-task-card neo-surface ${
-          hideActiveTaskOnDesktop ? "mobile-only" : ""
-        }`}
-      >
-        <p className="section-label">{t("activeTask")}</p>
+/** Active task picker — rendered under the timer controls so the primary
+ *  Start button stays above the fold on phones. */
+export function ActiveTaskCard({
+  tasks,
+  activeTaskId,
+  onSelectActive,
+  onToggleTask,
+  completedPomodoros,
+  className = "",
+}: ActiveTaskCardProps) {
+  const t = useT();
+  const activeTask = tasks.find((task) => task.id === activeTaskId) || null;
+  const estimated = activeTask?.estimatedPomodoros ?? 0;
 
-        {activeTask ? (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => onToggleTask(activeTask.id)}
-                className={`task-check-btn ${
-                  activeTask.completed
-                    ? "task-check-btn-done neo-btn-primary"
-                    : "neo-inset-sm"
-                }`}
-              >
-                {activeTask.completed && (
-                  <Check size={12} className="stroke-[3px] text-white" />
-                )}
-              </button>
+  return (
+    <div className={`active-task-card neo-surface ${className}`}>
+      <p className="section-label">{t("activeTask")}</p>
 
-              <p
-                className={`min-w-0 flex-1 truncate text-base font-semibold text-foreground ${
-                  activeTask.completed ? "task-title done" : ""
-                }`}
-              >
-                {activeTask.title}
-              </p>
+      {activeTask ? (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => onToggleTask(activeTask.id)}
+              className={`task-check-btn ${
+                activeTask.completed
+                  ? "task-check-btn-done neo-btn-primary"
+                  : "neo-inset-sm"
+              }`}
+            >
+              {activeTask.completed && (
+                <Check size={12} className="stroke-[3px] text-white" />
+              )}
+            </button>
 
-              <NeoSelect
-                value={activeTask.id}
-                onChange={(v) => onSelectActive(v || null)}
-                className="max-w-[100px] shrink-0"
-                ariaLabel={t("changeTask")}
-              >
-                <option value={activeTask.id}>{t("changeTask")}</option>
-
-                <option value="">{t("dropTask")}</option>
-
-                {tasks
-
-                  .filter(
-                    (task) => !task.completed && task.id !== activeTask.id,
-                  )
-
-                  .map((task) => (
-                    <option key={task.id} value={task.id}>
-                      {task.title}
-                    </option>
-                  ))}
-              </NeoSelect>
-            </div>
-
-            {(completedPomodoros > 0 || estimated > 0) && (
-              <div className="pomo-dots">
-                {Array.from({
-                  length: Math.min(
-                    Math.max(completedPomodoros, estimated, 1),
-                    8,
-                  ),
-                }).map((_, i) => (
-                  <span
-                    key={i}
-                    className={`pomo-dot ${i < completedPomodoros ? "filled" : ""}`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium text-muted">
-              {t("noActiveTask")}
+            <p
+              className={`min-w-0 flex-1 truncate text-base font-semibold text-foreground ${
+                activeTask.completed ? "task-title done" : ""
+              }`}
+            >
+              {activeTask.title}
             </p>
 
             <NeoSelect
-              value=""
+              value={activeTask.id}
               onChange={(v) => onSelectActive(v || null)}
-              className="w-full"
-              ariaLabel={t("selectTask")}
+              className="max-w-[100px] shrink-0"
+              ariaLabel={t("changeTask")}
             >
-              <option value="">{t("selectTask")}</option>
+              <option value={activeTask.id}>{t("changeTask")}</option>
+
+              <option value="">{t("dropTask")}</option>
 
               {tasks
 
-                .filter((task) => !task.completed)
+                .filter((task) => !task.completed && task.id !== activeTask.id)
 
                 .map((task) => (
                   <option key={task.id} value={task.id}>
@@ -178,8 +143,44 @@ export function TimerDisplay({
                 ))}
             </NeoSelect>
           </div>
-        )}
-      </div>
+
+          {(completedPomodoros > 0 || estimated > 0) && (
+            <div className="pomo-dots">
+              {Array.from({
+                length: Math.min(Math.max(completedPomodoros, estimated, 1), 8),
+              }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`pomo-dot ${i < completedPomodoros ? "filled" : ""}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium text-muted">{t("noActiveTask")}</p>
+
+          <NeoSelect
+            value=""
+            onChange={(v) => onSelectActive(v || null)}
+            className="w-full"
+            ariaLabel={t("selectTask")}
+          >
+            <option value="">{t("selectTask")}</option>
+
+            {tasks
+
+              .filter((task) => !task.completed)
+
+              .map((task) => (
+                <option key={task.id} value={task.id}>
+                  {task.title}
+                </option>
+              ))}
+          </NeoSelect>
+        </div>
+      )}
     </div>
   );
 }
