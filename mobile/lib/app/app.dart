@@ -57,6 +57,8 @@ class _EasyPomodoroAppState extends ConsumerState<EasyPomodoroApp>
       AppThemeMode.dark => ThemeMode.dark,
     };
     final ui = settings.uiStyle;
+    final reduceMotion = WidgetsBinding
+        .instance.platformDispatcher.accessibilityFeatures.disableAnimations;
 
     return MaterialApp.router(
       title: 'Easy Productivity',
@@ -64,6 +66,14 @@ class _EasyPomodoroAppState extends ConsumerState<EasyPomodoroApp>
       theme: AppTheme.light(uiStyle: ui, palette: settings.paletteId),
       darkTheme: AppTheme.dark(uiStyle: ui, palette: settings.paletteId),
       themeMode: mode,
+      // Style / palette / brightness changes morph: AppSurfaceStyle and
+      // AppColors lerp continuously, so give the morph room to be seen.
+      themeAnimationStyle: reduceMotion
+          ? AnimationStyle.noAnimation
+          : const AnimationStyle(
+              duration: Duration(milliseconds: 420),
+              curve: Curves.easeInOutCubic,
+            ),
       locale: const Locale('tr'),
       supportedLocales: const [Locale('tr'), Locale('en')],
       localizationsDelegates: const [
@@ -73,14 +83,11 @@ class _EasyPomodoroAppState extends ConsumerState<EasyPomodoroApp>
       ],
       builder: (context, child) {
         final brightness = Theme.of(context).brightness;
-        final surf = context.surfaceStyle;
-        Widget body = child ?? const SizedBox.shrink();
-        if (surf.isGlass) {
-          body = GlassPageWash(child: body);
-        }
+        // Same tree for every style — the backdrop fades its glass wash in
+        // and out instead of being inserted (which would remount the app).
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: AppTheme.overlayFor(brightness),
-          child: body,
+          child: AppBackdrop(child: child ?? const SizedBox.shrink()),
         );
       },
       routerConfig: widget.router,

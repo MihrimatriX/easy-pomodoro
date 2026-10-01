@@ -24,8 +24,12 @@ final audioServiceProvider = Provider<AudioService>((ref) {
   throw UnimplementedError('AudioService must be overridden');
 });
 
-/// UI clock tick — forces rebuild every second while running.
+/// UI clock tick — forces a rebuild every second, but only while the timer is
+/// running. Idle / paused screens stay still instead of repainting (and
+/// draining battery) once per second.
 final timerTickProvider = StreamProvider<DateTime>((ref) {
+  final running = ref.watch(pomodoroProvider.select((s) => s.isRunning));
+  if (!running) return Stream.value(DateTime.now());
   return Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now());
 });
 

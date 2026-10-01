@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_surface_style.dart';
@@ -35,54 +34,34 @@ class AppSheetFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final surf = context.surfaceStyle;
-    final r = surf.sheetRadius;
-    final allowBlur =
-        surf.isGlass && AppSurfaceStyle.glassBlurEnabled(context);
+    final radius = BorderRadius.vertical(top: Radius.circular(surf.sheetRadius));
     final deco = surf.sheetDecoration(
       c,
-      blurPanel: true,
-      opaqueFallback: surf.isGlass && !allowBlur,
+      opaqueFallback: !AppSurfaceStyle.glassBlurEnabled(context),
     );
-    final shadows = deco.boxShadow;
-    final fill = deco.copyWith(boxShadow: const <BoxShadow>[]);
-
-    Widget body = Container(
-      width: double.infinity,
-      decoration: fill,
-      child: Material(
-        type: MaterialType.transparency,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
-        clipBehavior: Clip.antiAlias,
-        child: child,
-      ),
-    );
-
-    if (surf.isGlass && allowBlur) {
-      body = ClipRRect(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: surf.glassSheetSigma,
-            sigmaY: surf.glassSheetSigma,
-          ),
-          child: body,
-        ),
-      );
-    } else {
-      body = ClipRRect(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
-        child: body,
-      );
-    }
 
     return Padding(
-      padding: EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(top: 8),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
-          boxShadow: shadows,
+          borderRadius: radius,
+          boxShadow: deco.boxShadow,
         ),
-        child: body,
+        child: ClipRRect(
+          borderRadius: radius,
+          child: SurfaceBlur(
+            borderRadius: radius,
+            sigma: surf.glassSheetSigma,
+            child: Container(
+              width: double.infinity,
+              decoration: deco.copyWith(boxShadow: const <BoxShadow>[]),
+              child: Material(
+                type: MaterialType.transparency,
+                child: child,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -116,40 +95,42 @@ class AppCtaButton extends StatelessWidget {
     required this.onPressed,
     this.color,
     this.height = 52,
+    this.fontSize = 15,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final Color? color;
   final double height;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final surf = context.surfaceStyle;
-    final r = surf.controlRadius;
-    final deco = surf.ctaDecoration(c, color: color, radius: r);
-    final fill = deco.copyWith(boxShadow: const <BoxShadow>[]);
+    final radius = BorderRadius.circular(surf.controlRadius);
+    final deco = surf.ctaDecoration(c, color: color, radius: radius.topLeft.x);
     return Container(
       height: height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(r),
-        boxShadow: deco.boxShadow,
-      ),
+      decoration: BoxDecoration(borderRadius: radius, boxShadow: deco.boxShadow),
       child: Material(
         color: Colors.transparent,
+        borderRadius: radius,
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(r),
+          borderRadius: radius,
+          splashColor: c.onAccent.withValues(alpha: 0.18),
+          highlightColor: c.onAccent.withValues(alpha: 0.08),
           child: Ink(
-            decoration: fill,
+            decoration: deco.copyWith(boxShadow: const <BoxShadow>[]),
             child: Center(
               child: Text(
                 label,
-                style: TextStyle(
+                style: GoogleFonts.dmSans(
                   fontWeight: FontWeight.w700,
                   color: c.onAccent,
-                  fontSize: 15,
+                  fontSize: fontSize,
                 ),
               ),
             ),
@@ -161,16 +142,18 @@ class AppCtaButton extends StatelessWidget {
 }
 
 /// Secondary raised control (Skip / Reset) via [secondaryDecoration].
-/// Glass: frost chip (σ14) + hairline; textPrimary for readability.
+/// Glass: frost chip (σ15) + hairline; textPrimary for readability.
 class AppSecondaryButton extends StatefulWidget {
   const AppSecondaryButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.icon,
     this.height = 48,
   });
 
   final String label;
+  final IconData? icon;
   final VoidCallback? onPressed;
   final double height;
 
@@ -185,56 +168,59 @@ class _AppSecondaryButtonState extends State<AppSecondaryButton> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final surf = context.surfaceStyle;
-    final r = surf.controlRadius;
-    final allowBlur =
-        surf.isGlass && AppSurfaceStyle.glassBlurEnabled(context);
+    final radius = BorderRadius.circular(surf.controlRadius);
     final deco = surf.secondaryDecoration(
       c,
-      radius: r,
+      radius: radius.topLeft.x,
       pressed: _pressed,
-      opaqueFallback: surf.isGlass && !allowBlur,
+      opaqueFallback: !AppSurfaceStyle.glassBlurEnabled(context),
     );
-    final labelColor = surf.isGlass ? c.textPrimary : c.textSecondary;
+    final labelColor = Color.lerp(
+      c.textSecondary,
+      c.textPrimary,
+      surf.glassWeight,
+    )!;
 
-    Widget ink = Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: widget.onPressed,
-        onHighlightChanged: (v) => setState(() => _pressed = v),
-        borderRadius: BorderRadius.circular(r),
-        child: Ink(
-          height: widget.height,
-          decoration: deco.copyWith(
-            boxShadow: const <BoxShadow>[],
-          ),
-          child: Center(
-            child: Text(
-              widget.label,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: labelColor,
-                fontSize: 14,
+    // Shadows live outside the clip — the neo extrusion used to be dropped
+    // here, leaving Skip / Reset invisible on the cream background.
+    return Container(
+      height: widget.height,
+      decoration: BoxDecoration(borderRadius: radius, boxShadow: deco.boxShadow),
+      child: SurfaceBlur(
+        borderRadius: radius,
+        sigma: surf.glassChipSigma,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: widget.onPressed,
+            onHighlightChanged: (v) => setState(() => _pressed = v),
+            borderRadius: radius,
+            child: Ink(
+              decoration: deco.copyWith(boxShadow: const <BoxShadow>[]),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.icon != null) ...[
+                      Icon(widget.icon, size: 18, color: labelColor),
+                      const SizedBox(width: 6),
+                    ],
+                    Text(
+                      widget.label,
+                      style: GoogleFonts.dmSans(
+                        fontWeight: FontWeight.w600,
+                        color: labelColor,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
-
-    if (surf.isGlass && allowBlur) {
-      ink = ClipRRect(
-        borderRadius: BorderRadius.circular(r),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: surf.glassChipSigma,
-            sigmaY: surf.glassChipSigma,
-          ),
-          child: ink,
-        ),
-      );
-    }
-
-    return ink;
   }
 }
 

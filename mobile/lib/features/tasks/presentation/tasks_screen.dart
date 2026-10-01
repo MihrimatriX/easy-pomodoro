@@ -47,7 +47,6 @@ class TasksScreen extends ConsumerWidget {
     final done = tasks.where((t) => t.completed).toList();
 
     return Scaffold(
-      backgroundColor: context.surfaceStyle.isGlass ? Colors.transparent : c.bg,
       appBar: AppBar(
         title: Text(
           'Görevler',
@@ -60,7 +59,7 @@ class TasksScreen extends ConsumerWidget {
               borderRadius: AppTheme.radiusPill,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               blur: true,
-              onTap: () => _showEditor(context, ref),
+              onTap: () => showTaskEditor(context, ref),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -81,7 +80,7 @@ class TasksScreen extends ConsumerWidget {
         ],
       ),
       body: tasks.isEmpty
-          ? _Empty(onAdd: () => _showEditor(context, ref))
+          ? _Empty(onAdd: () => showTaskEditor(context, ref))
           : ListView(
               padding: IslandInsets.listPadding(context),
               children: [
@@ -135,7 +134,7 @@ class TasksScreen extends ConsumerWidget {
                         final next = activeId == t.id ? null : t.id;
                         await ref.read(activeTaskIdProvider.notifier).set(next);
                       },
-                      onEdit: () => _showEditor(context, ref, existing: t),
+                      onEdit: () => showTaskEditor(context, ref, existing: t),
                     ),
                   ),
                 ),
@@ -162,7 +161,7 @@ class TasksScreen extends ConsumerWidget {
                           await ref.read(tasksProvider.notifier).toggle(t.id);
                         },
                         onSelectActive: null,
-                        onEdit: () => _showEditor(context, ref, existing: t),
+                        onEdit: () => showTaskEditor(context, ref, existing: t),
                       ),
                     ),
                   ),
@@ -171,51 +170,52 @@ class TasksScreen extends ConsumerWidget {
             ),
     );
   }
+}
 
-  Future<void> _showEditor(
-    BuildContext context,
-    WidgetRef ref, {
-    Task? existing,
-  }) async {
-    final c = context.colors;
-    final habits = ref.read(habitsProvider);
+/// Opens the task editor sheet; also used by the nav island's + button.
+Future<void> showTaskEditor(
+  BuildContext context,
+  WidgetRef ref, {
+  Task? existing,
+}) async {
+  final c = context.colors;
+  final habits = ref.read(habitsProvider);
 
-    final result = await showAppSheet<_TaskEditorResult>(
-      context: context,
-      builder: (sheetContext) {
-        return _TaskEditorSheet(
-          colors: c,
-          existing: existing,
-          habits: habits,
-        );
-      },
+  final result = await showAppSheet<_TaskEditorResult>(
+    context: context,
+    builder: (sheetContext) {
+      return _TaskEditorSheet(
+        colors: c,
+        existing: existing,
+        habits: habits,
+      );
+    },
+  );
+
+  if (!context.mounted || result == null) return;
+
+  final notifier = ref.read(tasksProvider.notifier);
+  if (result.delete) {
+    if (existing != null) await notifier.delete(existing.id);
+    return;
+  }
+  if (result.title.trim().isEmpty) return;
+
+  if (existing == null) {
+    await notifier.add(
+      title: result.title,
+      estimatedPomodoros: result.estimatedPomodoros,
+      linkedHabitId: result.linkedHabitId,
     );
-
-    if (!context.mounted || result == null) return;
-
-    final notifier = ref.read(tasksProvider.notifier);
-    if (result.delete) {
-      if (existing != null) await notifier.delete(existing.id);
-      return;
-    }
-    if (result.title.trim().isEmpty) return;
-
-    if (existing == null) {
-      await notifier.add(
-        title: result.title,
+  } else {
+    await notifier.updateTask(
+      existing.copyWith(
+        title: result.title.trim(),
         estimatedPomodoros: result.estimatedPomodoros,
         linkedHabitId: result.linkedHabitId,
-      );
-    } else {
-      await notifier.updateTask(
-        existing.copyWith(
-          title: result.title.trim(),
-          estimatedPomodoros: result.estimatedPomodoros,
-          linkedHabitId: result.linkedHabitId,
-          clearLinkedHabitId: result.linkedHabitId == null,
-        ),
-      );
-    }
+        clearLinkedHabitId: result.linkedHabitId == null,
+      ),
+    );
   }
 }
 

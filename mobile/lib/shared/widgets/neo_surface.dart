@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -7,8 +5,9 @@ import '../../core/theme/app_surface_style.dart';
 
 /// Style-aware surface — neo dual shadows / skeuo gradient / glass frost.
 ///
-/// Fill + shadows share one [BoxDecoration] (non-glass) so extrusion always
-/// paints. Glass keeps shadows outside [ClipRRect]/[BackdropFilter].
+/// The widget tree is identical for every style (shadows → [SurfaceBlur] →
+/// fill → ink), so a theme animation morphs the surface without remounting
+/// its child. Shadows sit outside the clip so they are never cut off.
 /// Pressed (when [onTap] set): muted fill + halved shadows (inset-ish).
 class NeoSurface extends StatefulWidget {
   const NeoSurface({
@@ -28,7 +27,7 @@ class NeoSurface extends StatefulWidget {
   final double? borderRadius;
   final VoidCallback? onTap;
 
-  /// When true and style is glass, wrap with BackdropFilter (chips / key cards).
+  /// When true and style is glass, frost the backdrop (chips / key cards).
   final bool blur;
 
   /// Override blur sigma (defaults to [AppSurfaceStyle.glassCardSigma]).
@@ -51,15 +50,14 @@ class _NeoSurfaceState extends State<NeoSurface> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final surf = context.surfaceStyle;
-    final radius = widget.borderRadius ?? surf.cardRadius;
-    final allowBlur =
-        surf.isGlass && widget.blur && AppSurfaceStyle.glassBlurEnabled(context);
+    final radius = BorderRadius.circular(widget.borderRadius ?? surf.cardRadius);
+    final blurAllowed = AppSurfaceStyle.glassBlurEnabled(context);
     final deco = surf.cardDecoration(
       c,
-      radius: radius,
-      blurPanel: allowBlur,
+      radius: radius.topLeft.x,
+      blurPanel: widget.blur && blurAllowed,
       pressed: _pressed,
-      opaqueFallback: surf.isGlass && widget.blur && !allowBlur,
+      opaqueFallback: widget.blur && !blurAllowed,
     );
 
     Widget body = Padding(
@@ -67,56 +65,37 @@ class _NeoSurfaceState extends State<NeoSurface> {
       child: widget.child,
     );
 
-    if (widget.onTap != null) {
-      body = Material(
-        type: MaterialType.transparency,
-        borderRadius: BorderRadius.circular(radius),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: widget.onTap,
-          onHighlightChanged: _setPressed,
-          borderRadius: BorderRadius.circular(radius),
-          splashColor: c.accent.withValues(alpha: 0.12),
-          highlightColor: c.accent.withValues(alpha: 0.06),
-          child: body,
-        ),
-      );
-    } else {
-      body = Material(
-        type: MaterialType.transparency,
-        borderRadius: BorderRadius.circular(radius),
-        clipBehavior: Clip.antiAlias,
-        child: body,
-      );
-    }
-
-    if (allowBlur) {
-      final shadows = deco.boxShadow;
-      final fillDeco = deco.copyWith(boxShadow: const <BoxShadow>[]);
-      final sigma = widget.blurSigma ?? surf.glassCardSigma;
-      Widget panel = DecoratedBox(decoration: fillDeco, child: body);
-      panel = ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-          child: panel,
-        ),
-      );
-      return Container(
-        margin: widget.margin,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(radius),
-          color: const Color(0x00FFFFFF),
-          boxShadow: shadows,
-        ),
-        child: panel,
-      );
-    }
+    body = Material(
+      type: MaterialType.transparency,
+      borderRadius: radius,
+      clipBehavior: Clip.antiAlias,
+      child: widget.onTap == null
+          ? body
+          : InkWell(
+              onTap: widget.onTap,
+              onHighlightChanged: _setPressed,
+              borderRadius: radius,
+              splashColor: c.accent.withValues(alpha: 0.12),
+              highlightColor: c.accent.withValues(alpha: 0.06),
+              child: body,
+            ),
+    );
 
     return Container(
       margin: widget.margin,
-      decoration: deco,
-      child: body,
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        boxShadow: deco.boxShadow,
+      ),
+      child: SurfaceBlur(
+        enabled: widget.blur,
+        borderRadius: radius,
+        sigma: widget.blurSigma,
+        child: DecoratedBox(
+          decoration: deco.copyWith(boxShadow: const <BoxShadow>[]),
+          child: body,
+        ),
+      ),
     );
   }
 }

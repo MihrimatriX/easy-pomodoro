@@ -21,7 +21,6 @@ class SettingsScreen extends ConsumerWidget {
     final c = context.colors;
 
     return Scaffold(
-      backgroundColor: context.surfaceStyle.isGlass ? Colors.transparent : c.bg,
       appBar: AppBar(title: const Text('Ayarlar')),
       body: ListView(
         padding: IslandInsets.listPadding(context),
@@ -42,7 +41,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Vurgu rengi paletten gelir — yüzey dili neo / skeuo / glass.',
+                    'Kartların, butonların ve arka planın dokusu. Geçiş canlı olarak uygulanır.',
                     style: GoogleFonts.dmSans(
                       fontSize: 13,
                       color: c.textSecondary,
@@ -51,42 +50,24 @@ class SettingsScreen extends ConsumerWidget {
                   const SizedBox(height: 14),
                   Row(
                     children: [
-                      Expanded(
-                        child: _StyleChip(
-                          style: UiSurfaceStyle.neo,
-                          label: 'Yumu\u015fak',
-                          subtitle: 'Neo',
-                          selected: s.uiStyle == UiSurfaceStyle.neo,
-                          onTap: () => n.setUiStyle(UiSurfaceStyle.neo),
+                      for (final opt in _styleOptions) ...[
+                        if (opt != _styleOptions.first) const SizedBox(width: 10),
+                        Expanded(
+                          child: _StyleChip(
+                            style: opt.style,
+                            label: opt.label,
+                            subtitle: opt.subtitle,
+                            selected: s.uiStyle == opt.style,
+                            onTap: () => n.setUiStyle(opt.style),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _StyleChip(
-                          style: UiSurfaceStyle.skeuo,
-                          label: 'Dokulu',
-                          subtitle: 'Skeuo',
-                          selected: s.uiStyle == UiSurfaceStyle.skeuo,
-                          onTap: () => n.setUiStyle(UiSurfaceStyle.skeuo),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _StyleChip(
-                          style: UiSurfaceStyle.glass,
-                          label: 'Cam',
-                          subtitle: 'Glass',
-                          selected: s.uiStyle == UiSurfaceStyle.glass,
-                          onTap: () => n.setUiStyle(UiSurfaceStyle.glass),
-                        ),
-                      ),
+                      ],
                     ],
                   ),
                 ],
               ),
             ),
           ]),
-          
           const SizedBox(height: 20),
           _SectionTitle('Renk paleti'),
           _Card(children: [
@@ -214,14 +195,19 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                   SegmentedButton<AppThemeMode>(
+                    expandedInsets: EdgeInsets.zero,
+                    showSelectedIcon: false,
                     segments: const [
-                      ButtonSegment(value: AppThemeMode.system, label: Text('Sistem')),
-                      ButtonSegment(value: AppThemeMode.light, label: Text('A\u00e7\u0131k')),
-                      ButtonSegment(value: AppThemeMode.dark, label: Text('Koyu')),
+                      ButtonSegment(value: AppThemeMode.system, icon: Icon(Icons.brightness_auto_rounded, size: 18), label: Text('Sistem')),
+                      ButtonSegment(value: AppThemeMode.light, icon: Icon(Icons.light_mode_rounded, size: 18), label: Text('A\u00e7\u0131k')),
+                      ButtonSegment(value: AppThemeMode.dark, icon: Icon(Icons.dark_mode_rounded, size: 18), label: Text('Koyu')),
                     ],
                     selected: {s.themeMode},
                     onSelectionChanged: (set) => n.setThemeMode(set.first),
                     style: ButtonStyle(
+                      side: WidgetStatePropertyAll(
+                        BorderSide(color: c.border.withValues(alpha: 0.6)),
+                      ),
                       foregroundColor: WidgetStateProperty.resolveWith((states) {
                         if (states.contains(WidgetState.selected)) {
                           return Colors.white;
@@ -232,7 +218,7 @@ class SettingsScreen extends ConsumerWidget {
                         if (states.contains(WidgetState.selected)) {
                           return c.accent;
                         }
-                        return c.surfaceMuted;
+                        return c.surfaceMuted.withValues(alpha: 0.6);
                       }),
                     ),
                   ),
@@ -261,6 +247,12 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+const _styleOptions = <({UiSurfaceStyle style, String label, String subtitle})>[
+  (style: UiSurfaceStyle.neo, label: 'Yumu\u015fak', subtitle: 'Neumorphism'),
+  (style: UiSurfaceStyle.skeuo, label: 'Dokulu', subtitle: 'Skeuomorphism'),
+  (style: UiSurfaceStyle.glass, label: 'Cam', subtitle: 'Glassmorphism'),
+];
+
 class _StyleChip extends StatelessWidget {
   const _StyleChip({
     required this.style,
@@ -279,57 +271,128 @@ class _StyleChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    // Preview uses the *target* style, not the current theme extension.
-    final preview = AppSurfaceStyle(style: style);
-    final deco = preview.cardDecoration(c, radius: 12);
+    final surf = context.surfaceStyle;
+    final radius = BorderRadius.circular(16);
+    final deco = surf.chipDecoration(c, radius: 16);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
-          decoration: context.surfaceStyle.cardDecoration(c, radius: 14).copyWith(
-            border: Border.all(
-              color: selected ? c.accent : (context.surfaceStyle.isNeo ? Colors.transparent : c.border),
-              width: selected ? 2 : (context.surfaceStyle.isNeo ? 0 : 1),
-            ),
-          ),
-          child: Column(
-            children: [
-              Container(
-                height: 36,
-                decoration: deco,
-                alignment: Alignment.center,
-                child: Text(
-                  switch (style) {
-                    UiSurfaceStyle.neo => '\u25ef',
-                    UiSurfaceStyle.skeuo => '\u25c6',
-                    UiSurfaceStyle.glass => '\u25c7',
-                  },
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: c.textSecondary,
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: '$label y\u00fczey stili',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.fromLTRB(6, 6, 6, 10),
+            decoration: selected
+                ? deco.copyWith(border: Border.all(color: c.accent, width: 2))
+                : deco,
+            child: Column(
+              children: [
+                _StylePreview(style: style),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 180),
+                      child: selected
+                          ? Padding(
+                              key: const ValueKey('on'),
+                              padding: const EdgeInsets.only(right: 4),
+                              child: Icon(Icons.check_circle_rounded, size: 15, color: c.accent),
+                            )
+                          : const SizedBox(key: ValueKey('off')),
+                    ),
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.dmSans(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          color: selected ? c.accent : c.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    subtitle,
+                    maxLines: 1,
+                    style: GoogleFonts.dmSans(fontSize: 11, color: c.textSecondary),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.dmSans(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                  color: selected ? c.accent : c.textPrimary,
-                ),
-              ),
-              Text(
-                subtitle,
-                style: GoogleFonts.dmSans(
-                  fontSize: 12,
-                  color: c.textSecondary,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Miniature scene rendered with the *target* style's real widgets, so the
+/// preview always matches what the app turns into.
+class _StylePreview extends StatelessWidget {
+  const _StylePreview({required this.style});
+
+  final UiSurfaceStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final c = context.colors;
+    final target = AppSurfaceStyle(style: style);
+    return Theme(
+      data: theme.copyWith(extensions: [c, target]),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(11),
+        child: SizedBox(
+          height: 70,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              ColoredBox(color: c.bg),
+              if (style == UiSurfaceStyle.glass)
+                CustomPaint(painter: GlassWashPainter(c)),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: NeoSurface(
+                        blur: true,
+                        borderRadius: target.cardRadius * 0.6,
+                        padding: const EdgeInsets.fromLTRB(7, 7, 7, 7),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _Bar(width: 22, color: c.textPrimary.withValues(alpha: 0.55)),
+                            _Bar(width: 14, color: c.textSecondary.withValues(alpha: 0.45)),
+                            Container(
+                              height: 9,
+                              decoration: target.ctaDecoration(c, radius: 5),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      width: 18,
+                      height: 18,
+                      decoration: target.insetDecoration(c, radius: 9),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -338,6 +401,19 @@ class _StyleChip extends StatelessWidget {
       ),
     );
   }
+}
+
+class _Bar extends StatelessWidget {
+  const _Bar({required this.width, required this.color});
+  final double width;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: width,
+    height: 4,
+    decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2)),
+  );
 }
 
 class _SectionTitle extends StatelessWidget {
@@ -368,7 +444,10 @@ class _Card extends StatelessWidget {
     return NeoSurface(
       blur: true,
       padding: EdgeInsets.zero,
-      child: Column(children: children),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: children,
+      ),
     );
   }
 }
@@ -485,12 +564,11 @@ class _PaletteSwatch extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           width: 96,
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-          decoration: context.surfaceStyle.cardDecoration(c, radius: 14).copyWith(
-            border: Border.all(
-              color: selected ? c.accent : (context.surfaceStyle.isNeo ? Colors.transparent : c.border),
-              width: selected ? 2 : (context.surfaceStyle.isNeo ? 0 : 1),
-            ),
-          ),
+          decoration: selected
+              ? context.surfaceStyle
+                  .chipDecoration(c, radius: 14)
+                  .copyWith(border: Border.all(color: c.accent, width: 2))
+              : context.surfaceStyle.chipDecoration(c, radius: 14),
           child: Column(
             children: [
               Container(

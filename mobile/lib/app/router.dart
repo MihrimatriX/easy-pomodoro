@@ -1,7 +1,7 @@
 import 'dart:math' as math;
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -63,7 +63,7 @@ GoRouter createRouter() {
   );
 }
 
-class _ScaffoldWithNav extends StatelessWidget {
+class _ScaffoldWithNav extends ConsumerWidget {
   const _ScaffoldWithNav({required this.shell});
   final StatefulNavigationShell shell;
 
@@ -71,7 +71,7 @@ class _ScaffoldWithNav extends StatelessWidget {
   static const _fab = AppTheme.floatingFabSize;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final mq = MediaQuery.of(context);
     final safe = mq.padding.bottom;
     final bottomPad = math.max(safe, 8.0) + 8.0;
@@ -96,7 +96,11 @@ class _ScaffoldWithNav extends StatelessWidget {
             child: _FloatingIslandNav(
               index: shell.currentIndex,
               onSelect: shell.goBranch,
-              onAdd: () => shell.goBranch(3), // Gorevler / quick add
+              // Quick add: jump to Görevler and open the new-task sheet.
+              onAdd: () {
+                if (shell.currentIndex != 3) shell.goBranch(3);
+                showTaskEditor(context, ref);
+              },
             ),
           ),
         ],
@@ -145,47 +149,11 @@ class _FloatingIslandNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
     final surf = context.surfaceStyle;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final shadows = surf.islandShadows(c);
-
-    // Neo: cream-on-cream + dual shadows (no Material float, no blur).
-    // Skeuo: vertical gradient + rim. Glass: frost blur + hairline.
-    final Color? barFill;
-    final Gradient? barGradient;
-    final Border? barBorder;
-    if (surf.isNeo) {
-      barFill = c.bg;
-      barGradient = null;
-      barBorder = null;
-    } else if (surf.isSkeuo) {
-      barFill = null;
-      barGradient = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: isDark
-            ? [c.surfaceMuted, c.surface]
-            : [
-                Color.lerp(c.bgElevated, Colors.white, 0.45)!,
-                c.surface,
-              ],
-      );
-      barBorder = Border.all(
-        color: isDark ? const Color(0x40FFFFFF) : const Color(0x99FFFFFF),
-        width: 0.5,
-      );
-    } else {
-      final allowBlur = AppSurfaceStyle.glassBlurEnabled(context);
-      barFill = surf.islandFill(c, opaqueFallback: !allowBlur) ??
-          c.bgElevated.withValues(alpha: isDark ? 0.88 : 0.90);
-      barGradient = null;
-      barBorder = Border.all(
-        color: surf.islandBorderColor(c) ??
-            (isDark
-                ? const Color(0x1FFFF8F3)
-                : const Color(0x9EFFFFFF)),
-        width: 1,
-      );
-    }
+    final deco = surf.islandDecoration(
+      c,
+      opaqueFallback: !AppSurfaceStyle.glassBlurEnabled(context),
+    );
+    final pill = BorderRadius.circular(AppTheme.radiusPill);
 
     const barPadV = 8.0;
     final row = Row(
@@ -204,44 +172,24 @@ class _FloatingIslandNav extends StatelessWidget {
       ],
     );
 
-    Widget inner = Container(
-      height: AppTheme.floatingNavHeight,
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: barPadV),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: barFill,
-        gradient: barGradient,
-        borderRadius: BorderRadius.circular(999),
-        border: barBorder,
-      ),
-      child: row,
-    );
-
-    if (surf.isGlass && AppSurfaceStyle.glassBlurEnabled(context)) {
-      final blurSigma = surf.glassNavSigma;
-      inner = ClipRRect(
-        borderRadius: BorderRadius.circular(999),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-          child: inner,
-        ),
-      );
-    } else {
-      inner = ClipRRect(
-        borderRadius: BorderRadius.circular(999),
-        child: inner,
-      );
-    }
-
+    // Same tree for every style: shadows → frost → fill → items.
     final capsule = Container(
       height: AppTheme.floatingNavHeight,
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        boxShadow: shadows,
+      decoration: BoxDecoration(borderRadius: pill, boxShadow: deco.boxShadow),
+      child: ClipRRect(
+        borderRadius: pill,
+        child: SurfaceBlur(
+          borderRadius: pill,
+          sigma: surf.glassNavSigma,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: barPadV),
+            alignment: Alignment.center,
+            decoration: deco.copyWith(boxShadow: const <BoxShadow>[]),
+            child: row,
+          ),
+        ),
       ),
-      child: inner,
     );
 
     // FAB uses CTA language (skeuo gradient + accent shadow when applicable).
@@ -255,7 +203,7 @@ class _FloatingIslandNav extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: fabDeco.gradient,
-        color: fabDeco.gradient == null ? (fabDeco.color ?? c.accent) : null,
+        color: fabDeco.color,
         boxShadow: fabDeco.boxShadow,
         border: fabDeco.border,
       ),
@@ -270,7 +218,10 @@ class _FloatingIslandNav extends StatelessWidget {
             child: SizedBox(
               width: AppTheme.floatingFabSize,
               height: AppTheme.floatingFabSize,
-              child: Icon(Icons.add_rounded, color: c.onAccent, size: 28),
+              child: Tooltip(
+                message: 'Yeni görev',
+                child: Icon(Icons.add_rounded, color: c.onAccent, size: 28),
+              ),
             ),
           ),
         ),

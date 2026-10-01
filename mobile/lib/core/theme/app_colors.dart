@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'app_palette.dart';
@@ -44,12 +45,12 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color success;
   final List<BoxShadow> neoShadows;
 
-  /// Chip / soft fill â€” always derived from active [accent] via accentSoft.
+  /// Chip / soft fill — always derived from active [accent] via accentSoft.
   Color get accentMuted => accentSoft;
   Color get breakMuted => breakSoft;
 
   /// All accents/softs/muted surfaces come from [palette] + brightness.
-  /// No hardcoded tomato/peach leftover â€” ocean UI is blue end-to-end.
+  /// No hardcoded tomato/peach leftover — ocean UI is blue end-to-end.
   static AppColors resolve(Brightness brightness, ColorPaletteId palette) {
     final a = PaletteAccents.of(palette, brightness);
     const cream = Color(0xFFEDE7E0);
@@ -209,9 +210,53 @@ class AppColors extends ThemeExtension<AppColors> {
       textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
       danger: Color.lerp(danger, other.danger, t)!,
       success: Color.lerp(success, other.success, t)!,
-      neoShadows: t < 0.5 ? neoShadows : other.neoShadows,
+      neoShadows: BoxShadow.lerpList(neoShadows, other.neoShadows, t)!,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is AppColors &&
+      other.bg == bg &&
+      other.bgElevated == bgElevated &&
+      other.surface == surface &&
+      other.surfaceMuted == surfaceMuted &&
+      other.border == border &&
+      other.accent == accent &&
+      other.accentPressed == accentPressed &&
+      other.accentSoft == accentSoft &&
+      other.breakColor == breakColor &&
+      other.breakPressed == breakPressed &&
+      other.breakSoft == breakSoft &&
+      other.onAccent == onAccent &&
+      other.textPrimary == textPrimary &&
+      other.textSecondary == textSecondary &&
+      other.textTertiary == textTertiary &&
+      other.danger == danger &&
+      other.success == success &&
+      listEquals(other.neoShadows, neoShadows);
+
+  @override
+  int get hashCode => Object.hash(
+        bg,
+        bgElevated,
+        surface,
+        surfaceMuted,
+        border,
+        accent,
+        accentPressed,
+        accentSoft,
+        breakColor,
+        breakPressed,
+        breakSoft,
+        onAccent,
+        textPrimary,
+        textSecondary,
+        textTertiary,
+        danger,
+        success,
+        Object.hashAll(neoShadows),
+      );
 }
 
 extension AppColorsX on BuildContext {

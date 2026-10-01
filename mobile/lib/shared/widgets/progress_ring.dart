@@ -28,8 +28,9 @@ class ProgressRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final surf = context.surfaceStyle;
     final c = context.colors;
-    final wellSize = size + 20;
-    final well = surf.ringWellDecoration(c, size: wellSize);
+    final wellSize = size + 24;
+    final well = surf.ringWellDecoration(c);
+    final radius = BorderRadius.circular(wellSize / 2);
     final ring = SizedBox(
       width: size,
       height: size,
@@ -43,13 +44,19 @@ class ProgressRing extends StatelessWidget {
         child: Center(child: child),
       ),
     );
-    if (well == null) return ring;
+    // Same tree for every style: shadow shell → (frost) → disc fill → ring.
     return Container(
       width: wellSize,
       height: wellSize,
-      alignment: Alignment.center,
-      decoration: well,
-      child: ring,
+      decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: well.boxShadow),
+      child: SurfaceBlur(
+        borderRadius: radius,
+        sigma: surf.glassCardSigma,
+        child: DecoratedBox(
+          decoration: well.copyWith(boxShadow: const <BoxShadow>[]),
+          child: Center(child: ring),
+        ),
+      ),
     );
   }
 }
