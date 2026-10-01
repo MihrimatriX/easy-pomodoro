@@ -42,7 +42,10 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Sıfırla', style: GoogleFonts.dmSans(fontWeight: FontWeight.w700)),
+        title: Text(
+          'Sıfırla',
+          style: GoogleFonts.dmSans(fontWeight: FontWeight.w700),
+        ),
         content: Text(
           'Sayacı başa almak istediğine emin misin?',
           style: GoogleFonts.dmSans(color: c.textSecondary),
@@ -50,11 +53,20 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Vazgeç', style: GoogleFonts.dmSans(color: c.textSecondary)),
+            child: Text(
+              'Vazgeç',
+              style: GoogleFonts.dmSans(color: c.textSecondary),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Sıfırla', style: GoogleFonts.dmSans(color: c.danger, fontWeight: FontWeight.w700)),
+            child: Text(
+              'Sıfırla',
+              style: GoogleFonts.dmSans(
+                color: c.danger,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ],
       ),
@@ -93,7 +105,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: Icon(
-                    activeId == null ? Icons.check_circle : Icons.radio_button_unchecked,
+                    activeId == null
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
                     color: activeId == null ? c.accent : c.textSecondary,
                   ),
                   title: Text(
@@ -141,9 +155,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     );
 
     if (!mounted || picked == null) return;
-    await ref.read(activeTaskIdProvider.notifier).set(
-          picked.isEmpty ? null : picked,
-        );
+    await ref
+        .read(activeTaskIdProvider.notifier)
+        .set(picked.isEmpty ? null : picked);
   }
 
   Future<void> _offerHabitCheckIn() async {
@@ -195,7 +209,10 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                           .map(
                             (h) => ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: Text(h.emoji, style: const TextStyle(fontSize: 22)),
+                              leading: Text(
+                                h.emoji,
+                                style: const TextStyle(fontSize: 22),
+                              ),
                               title: Text(
                                 h.title,
                                 style: GoogleFonts.dmSans(
@@ -283,7 +300,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     }
 
     return Scaffold(
-      backgroundColor: context.surfaceStyle.isGlass ? Colors.transparent : c.bg,
       body: SafeArea(
         bottom: false,
         child: Padding(
@@ -293,119 +309,105 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
             AppTheme.pagePaddingH,
             IslandInsets.bottom(context),
           ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              NeoSurface(
-                borderRadius: AppTheme.radiusPill,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                blur: true,
-                blurSigma: context.surfaceStyle.glassChipSigma,
-                child: Text(
-                  'Tur $round / $interval',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: c.textSecondary,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              PhaseChip(phase: session.phase),
-              const SizedBox(height: 12),
-              _ActiveTaskChip(
-                task: activeTask,
-                onTap: _pickActiveTask,
-              ),
-              const Spacer(flex: 2),
-              ProgressRing(
-                progress: progress,
-                color: phaseColor,
-                trackColor: c.surfaceMuted,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(_fmt(remaining), style: AppTheme.timerDigits(context)),
-                    const SizedBox(height: 8),
-                    Text(
-                      session.phase.microcopyTr,
+          child: LayoutBuilder(
+            builder: (context, box) {
+              // Chips + CTA row + buttons take ~313 dp; the ring gets the
+              // rest so small phones never overflow.
+              final ringSize = (box.maxHeight - 313).clamp(150.0, 280.0);
+              return Column(
+                children: [
+                  const SizedBox(height: 12),
+                  NeoSurface(
+                    borderRadius: AppTheme.radiusPill,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
+                    blur: true,
+                    blurSigma: context.surfaceStyle.glassChipSigma,
+                    child: Text(
+                      'Tur $round / $interval',
                       style: GoogleFonts.dmSans(
-                        fontSize: 14,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                         color: c.textSecondary,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const Spacer(flex: 2),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: Builder(
-                  builder: (ctx) {
-                    final r = ctx.surfaceStyle.controlRadius;
-                    final deco = ctx.surfaceStyle.ctaDecoration(
-                      c,
-                      color: phaseColor,
-                    );
-                    final fill = deco.copyWith(boxShadow: const <BoxShadow>[]);
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(r),
-                        boxShadow: deco.boxShadow,
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () async {
-                            final n = ref.read(pomodoroProvider.notifier);
-                            if (session.isRunning) {
-                              await n.pause();
-                            } else {
-                              await n.start();
-                            }
-                          },
-                          borderRadius: BorderRadius.circular(r),
-                          child: Ink(
-                            decoration: fill,
-                            child: Center(
-                              child: Text(
-                                ctaLabel,
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                  color: c.onAccent,
-                                ),
-                              ),
-                            ),
+                  ),
+                  const SizedBox(height: 10),
+                  PhaseChip(phase: session.phase),
+                  const SizedBox(height: 12),
+                  _ActiveTaskChip(task: activeTask, onTap: _pickActiveTask),
+                  const Spacer(flex: 2),
+                  ProgressRing(
+                    size: ringSize,
+                    progress: progress,
+                    color: phaseColor,
+                    trackColor: c.surfaceMuted,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _fmt(remaining),
+                          style: AppTheme.timerDigits(
+                            context,
+                            size: ringSize * 0.2,
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        Text(
+                          session.phase.microcopyTr,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 14,
+                            color: c.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(flex: 2),
+                  SizedBox(
+                    width: double.infinity,
+                    child: AppCtaButton(
+                      label: ctaLabel,
+                      color: phaseColor,
+                      height: 56,
+                      fontSize: 17,
+                      onPressed: () async {
+                        final n = ref.read(pomodoroProvider.notifier);
+                        if (session.isRunning) {
+                          await n.pause();
+                        } else {
+                          await n.start();
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppSecondaryButton(
+                          icon: Icons.skip_next_rounded,
+                          label: 'Atla',
+                          onPressed: () =>
+                              ref.read(pomodoroProvider.notifier).skip(),
+                        ),
                       ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: AppSecondaryButton(
-                      label: 'Atla',
-                      onPressed: () =>
-                          ref.read(pomodoroProvider.notifier).skip(),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: AppSecondaryButton(
+                          icon: Icons.restart_alt_rounded,
+                          label: 'Sıfırla',
+                          onPressed: _confirmReset,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: AppSecondaryButton(
-                      label: 'Sıfırla',
-                      onPressed: _confirmReset,
-                    ),
-                  ),
+                  const SizedBox(height: 20),
                 ],
-              ),
-              const SizedBox(height: 20),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -456,4 +458,3 @@ class _ActiveTaskChip extends StatelessWidget {
     );
   }
 }
-

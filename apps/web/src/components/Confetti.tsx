@@ -6,97 +6,117 @@ type ConfettiProps = {
   trigger: number;
 };
 
+type Particle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  color: string;
+  alpha: number;
+  decay: number;
+  round: boolean;
+  spin: number;
+  angle: number;
+};
+
+/** Theme-aware palette: accent + phase colours + white sparkle. */
+function themeColors(): string[] {
+  const css = getComputedStyle(document.documentElement);
+  const pick = (name: string) => css.getPropertyValue(name).trim();
+  const colors = [
+    pick("--accent"),
+    pick("--accent-hover"),
+    pick("--phase-short"),
+    pick("--phase-long"),
+    "#ffffff",
+  ].filter(Boolean);
+  return colors.length > 1 ? colors : ["#2563eb", "#14b8a6", "#6366f1", "#ffffff"];
+}
+
 export function Confetti({ trigger }: ConfettiProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     if (trigger === 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    const colors = [
-      "#2563eb",
-      "#3b82f6",
-      "#60a5fa",
-      "#14b8a6",
-      "#ffffff",
-      "#93c5fd",
-    ];
-    const particles: {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-      color: string;
-      alpha: number;
-      decay: number;
-    }[] = [];
+    const colors = themeColors();
+    const particles: Particle[] = Array.from({ length: 90 }, () => ({
+      x: width / 2,
+      y: height * 0.45,
+      vx: (Math.random() - 0.5) * 16,
+      vy: (Math.random() - 0.75) * 16 - 4,
+      radius: Math.random() * 4 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: 1,
+      decay: Math.random() * 0.015 + 0.012,
+      // Shape is fixed per particle (it used to be re-rolled every frame,
+      // which made the confetti flicker between circles and squares).
+      round: Math.random() > 0.5,
+      spin: (Math.random() - 0.5) * 0.3,
+      angle: Math.random() * Math.PI,
+    }));
 
-    // Patlama efektinde 100 partikül oluştur
-    for (let i = 0; i < 100; i++) {
-      particles.push({
-        x: canvas.width / 2,
-        y: canvas.height * 0.45,
-        vx: (Math.random() - 0.5) * 16,
-        vy: (Math.random() - 0.75) * 16 - 4,
-        radius: Math.random() * 5 + 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: 1,
-        decay: Math.random() * 0.015 + 0.012,
-      });
-    }
-
-    let animationFrameId: number;
+    let animationFrameId = 0;
     const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, width, height);
       let active = false;
 
-      particles.forEach((p) => {
-        if (p.alpha <= 0) return;
+      for (const p of particles) {
+        if (p.alpha <= 0) continue;
         active = true;
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.38; // Yerçekimi
-        p.vx *= 0.98; // Sürtünme
+        p.vy += 0.38; // gravity
+        p.vx *= 0.98; // drag
+        p.angle += p.spin;
         p.alpha -= p.decay;
 
         ctx.save();
         ctx.globalAlpha = Math.max(0, p.alpha);
         ctx.fillStyle = p.color;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
         ctx.beginPath();
-        // Daire veya dikdörtgen partiküller
-        if (Math.random() > 0.5) {
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        if (p.round) {
+          ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
         } else {
-          ctx.rect(
-            p.x - p.radius,
-            p.y - p.radius,
-            p.radius * 2,
-            p.radius * 1.5,
-          );
+          ctx.rect(-p.radius, -p.radius * 0.75, p.radius * 2, p.radius * 1.5);
         }
         ctx.fill();
         ctx.restore();
-      });
+      }
 
       if (active) {
         animationFrameId = requestAnimationFrame(render);
+      } else {
+        ctx.clearRect(0, 0, width, height);
       }
     };
 
     render();
-    return () => cancelAnimationFrame(animationFrameId);
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      ctx.clearRect(0, 0, width, height);
+    };
   }, [trigger]);
 
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden
       className="fixed inset-0 pointer-events-none z-50 h-full w-full"
     />
   );

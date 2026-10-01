@@ -41,7 +41,6 @@ class HistoryScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: context.surfaceStyle.isGlass ? Colors.transparent : c.bg,
       appBar: AppBar(title: const Text('Geçmiş')),
       body: ListView(
         padding: IslandInsets.listPadding(context),

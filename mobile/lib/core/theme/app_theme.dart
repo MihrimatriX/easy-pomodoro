@@ -54,11 +54,13 @@ class AppTheme {
         : ThemeData.dark(useMaterial3: true);
     final surfaceExt = AppSurfaceStyle(style: uiStyle);
 
-    final isGlass = uiStyle == UiSurfaceStyle.glass;
     return base.copyWith(
       brightness: brightness,
-      // Glass paints a page gradient behind transparent scaffolds.
-      scaffoldBackgroundColor: isGlass ? Colors.transparent : colors.bg,
+      // Every style paints its page background once in [AppBackdrop]
+      // (palette bg + glass wash). Scaffolds stay transparent so a style
+      // switch never lerps bg → transparent black (muddy grey flash).
+      scaffoldBackgroundColor: Colors.transparent,
+      canvasColor: colors.bg,
       colorScheme: ColorScheme(
         brightness: brightness,
         primary: colors.accent,
@@ -83,7 +85,8 @@ class AppTheme {
         displayColor: colors.textPrimary,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: isGlass ? Colors.transparent : colors.bg,
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         foregroundColor: colors.textPrimary,
         elevation: 0,
         scrolledUnderElevation: 0,

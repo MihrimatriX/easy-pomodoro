@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,6 +18,15 @@ import 'router.dart';
 
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Offline-first: DM Sans + Fraunces ship in assets/google_fonts, so the
+  // first launch never depends on fonts.gstatic.com.
+  GoogleFonts.config.allowRuntimeFetching = false;
+  LicenseRegistry.addLicense(() async* {
+    for (final family in ['DMSans', 'Fraunces']) {
+      final text = await rootBundle.loadString('assets/google_fonts/OFL-$family.txt');
+      yield LicenseEntryWithLineBreaks(['google_fonts', family], text);
+    }
+  });
   await initializeDateFormatting('tr');
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

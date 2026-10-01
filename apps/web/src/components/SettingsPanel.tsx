@@ -11,6 +11,7 @@ import type {
   ThemeMode,
 } from "@shared/types";
 import { playCompletionSound } from "@/lib/sounds";
+import { originFromEvent, runThemeSwitch } from "@/lib/theme";
 import { requestNotificationPermission } from "@/lib/notifications";
 import {
   clearAllData,
@@ -91,7 +92,15 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
   const locale = useLocale();
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const selectTheme = (id: ColorThemeId) => onChange({ colorTheme: id });
+  /** Visual changes go through one atomic, animated switch. */
+  const switchVisual = (
+    patch: Partial<AppSettings>,
+    event?: React.MouseEvent<HTMLElement>,
+  ) => runThemeSwitch(() => onChange(patch), originFromEvent(event));
+  const selectTheme = (
+    id: ColorThemeId,
+    event?: React.MouseEvent<HTMLElement>,
+  ) => switchVisual({ colorTheme: id }, event);
   const selectLocale = (id: LocaleId) => onChange({ locale: id });
 
   const handleExport = () => {
@@ -166,7 +175,9 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
         <UiStylePicker
           locale={locale}
           value={settings.uiStyle}
-          onChange={(uiStyle) => onChange({ uiStyle })}
+          onChange={(uiStyle, event) => {
+            if (uiStyle !== settings.uiStyle) switchVisual({ uiStyle }, event);
+          }}
         />
 
         <p className="section-label mb-3 mt-5">{t("themeMode")}</p>
@@ -181,7 +192,9 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             <button
               key={m.id}
               type="button"
-              onClick={() => onChange({ theme: m.id })}
+              onClick={(event) => {
+                if (m.id !== settings.theme) switchVisual({ theme: m.id }, event);
+              }}
               className={`theme-mode-btn neo-surface-sm ${settings.theme === m.id ? "active" : ""}`}
               aria-pressed={settings.theme === m.id}
             >
@@ -196,7 +209,9 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             <button
               key={theme.id}
               type="button"
-              onClick={() => selectTheme(theme.id)}
+              onClick={(event) => {
+                if (theme.id !== settings.colorTheme) selectTheme(theme.id, event);
+              }}
               className={`theme-swatch ${settings.colorTheme === theme.id ? "active" : ""}`}
               aria-pressed={settings.colorTheme === theme.id}
             >
@@ -212,7 +227,9 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
           ))}
           <button
             type="button"
-            onClick={() => selectTheme("custom")}
+            onClick={(event) => {
+              if (settings.colorTheme !== "custom") selectTheme("custom", event);
+            }}
             className={`theme-swatch ${settings.colorTheme === "custom" ? "active" : ""}`}
             aria-pressed={settings.colorTheme === "custom"}
           >

@@ -7,7 +7,7 @@ import type { LocaleId, UiStyleId } from "@shared/types";
 type UiStylePickerProps = {
   locale: LocaleId;
   value: UiStyleId;
-  onChange: (style: UiStyleId) => void;
+  onChange: (style: UiStyleId, event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export function UiStylePicker({ locale, value, onChange }: UiStylePickerProps) {
@@ -17,7 +17,7 @@ export function UiStylePicker({ locale, value, onChange }: UiStylePickerProps) {
         <button
           key={style.id}
           type="button"
-          onClick={() => onChange(style.id)}
+          onClick={(event) => onChange(style.id, event)}
           className={`ui-style-card ${value === style.id ? "active" : ""}`}
           aria-pressed={value === style.id}
         >

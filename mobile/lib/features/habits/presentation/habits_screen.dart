@@ -45,7 +45,6 @@ class HabitsScreen extends ConsumerWidget {
     final doneToday = habits.where((h) => h.isDoneToday).length;
 
     return Scaffold(
-      backgroundColor: context.surfaceStyle.isGlass ? Colors.transparent : c.bg,
       appBar: AppBar(
         title: Text(
           'Alışkanlıklar',

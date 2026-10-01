@@ -161,20 +161,30 @@ export function StatsView({
         <p className="mb-4 flex items-center gap-1.5 text-sm font-semibold text-muted">
           <Calendar size={14} /> {tr("statsWeekChart")}
         </p>
-        <div className="flex items-end justify-between gap-2.5 h-[100px] pt-2">
+        <div className="flex h-[132px] items-stretch justify-between gap-2.5 pt-2">
           {last7Days.map(({ day, count }) => (
             <div
               key={day}
-              className="flex flex-1 flex-col items-center gap-1.5"
+              className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
             >
-              <div
-                className="w-full rounded-t-md bg-accent/90 transition-all duration-500 hover:bg-accent"
-                style={{
-                  height: `${(count / maxCount) * 100}%`,
-                  minHeight: count > 0 ? 8 : 2,
-                }}
-                title={tr("sessionsCount", { n: count })}
-              />
+              {/* flex-1 gives the bar a definite height to be a % of. */}
+              <div className="flex w-full flex-1 flex-col items-center justify-end gap-1">
+                {count > 0 && (
+                  <span className="text-[0.6875rem] font-bold leading-none text-accent">
+                    {count}
+                  </span>
+                )}
+                <div
+                  className="stats-bar w-full rounded-t-md"
+                  style={{
+                    // 82%: leaves headroom for the count label above the bar.
+                    height: `${(count / maxCount) * 82}%`,
+                    minHeight: count > 0 ? 8 : 3,
+                    opacity: count > 0 ? 1 : 0.35,
+                  }}
+                  title={tr("sessionsCount", { n: count })}
+                />
+              </div>
               <span className="text-xs font-bold text-muted/80">
                 {day.slice(8)}
               </span>

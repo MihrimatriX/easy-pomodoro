@@ -141,7 +141,22 @@ Sabit açık mod varsayılan · neomorphism · mavi-beyaz palet.
 | Kısa mola | `#14b8a6` | Faz rengi |
 | Uzun mola | `#6366f1` | Faz rengi |
 
-Web CSS: `apps/web/src/app/globals.css`
+Web CSS: `apps/web/src/app/globals.css`, stil token’ları `apps/web/src/app/ui-styles.css`.
+
+### UI stili / tema geçişleri (web)
+
+- Tema = `<html>` üzerindeki CSS değişkenleri + `data-ui-style` / `data-theme`
+  öznitelikleri (`apps/web/src/lib/theme.ts`).
+- Son uygulanan tema `localStorage`’a önbelleklenir; `<head>`’deki küçük boot
+  script (`lib/theme-boot.ts`) onu **ilk boyamadan önce** uygular — sayfa
+  yenilenince varsayılan neo tema bir anlığına görünmez.
+- Stil / mod / palet değişimi `runThemeSwitch()` ile tek adımda yapılır:
+  geçiş süresince öğe animasyonları dondurulur (gradyan, iç gölge ve
+  `backdrop-filter` ara değerlenemediği için yarım kalmış yüzeyler oluşuyordu)
+  ve tarayıcı destekliyorsa View Transitions ile tıklanan noktadan dairesel bir
+  geçiş yapılır. `prefers-reduced-motion` açıkken anında değişir.
+
+Mobil (Flutter) karşılığı için `mobile/README.md` → “Yüzey stilleri”.
 
 ---
 

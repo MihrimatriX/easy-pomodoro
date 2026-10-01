@@ -16,7 +16,7 @@ import { SidebarNav } from "@/components/SidebarNav";
 import { ThemeApplier } from "@/components/ThemeApplier";
 import { HomeHub } from "@/components/HomeHub";
 import { HabitTracker } from "@/components/HabitTracker";
-import { TimerDisplay } from "@/components/TimerDisplay";
+import { ActiveTaskCard, TimerDisplay } from "@/components/TimerDisplay";
 import { TimerControls } from "@/components/TimerControls";
 import { PhaseTabs } from "@/components/PhaseTabs";
 import { TaskList } from "@/components/TaskList";
@@ -35,9 +35,11 @@ type PomodoroView = "timer" | "tasks";
 function AppShellInner({
   settings,
   setSettings,
+  settingsHydrated,
 }: {
   settings: Settings;
   setSettings: (patch: Partial<Settings>) => void;
+  settingsHydrated: boolean;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -52,8 +54,14 @@ function AppShellInner({
     updateTask,
     deleteTask,
   } = useTasks();
-  const { habits, addHabit, updateHabit, deleteHabit, toggleDate } =
-    useHabits();
+  const {
+    habits,
+    addHabit,
+    updateHabit,
+    deleteHabit,
+    toggleDate,
+    hydrated: habitsHydrated,
+  } = useHabits();
   const { stats, logSession, deleteSession } = useStats();
 
   const handlePhaseComplete = useCallback(
@@ -95,6 +103,9 @@ function AppShellInner({
   const prevCompletedRef = useRef(-1);
 
   useEffect(() => {
+    // Only celebrate a user action: the first count after loading saved
+    // habits is the baseline (it used to fire confetti on every page load).
+    if (!habitsHydrated) return;
     if (
       prevCompletedRef.current !== -1 &&
       habitProgress.completed > prevCompletedRef.current
@@ -102,7 +113,7 @@ function AppShellInner({
       setConfettiTrigger((prev) => prev + 1);
     }
     prevCompletedRef.current = habitProgress.completed;
-  }, [habitProgress.completed]);
+  }, [habitProgress.completed, habitsHydrated]);
 
   const completedPomodoros = activeTaskId
     ? stats.allSessions.filter(
@@ -127,7 +138,7 @@ function AppShellInner({
       <div className="ambient-orb ambient-orb-a" aria-hidden />
       <div className="ambient-orb ambient-orb-b" aria-hidden />
       <Confetti trigger={confettiTrigger} />
-      <ThemeApplier settings={settings} />
+      <ThemeApplier settings={settings} hydrated={settingsHydrated} />
 
       <div className="desktop-layout">
         <SidebarNav active={tab} onChange={setTab} />
@@ -201,12 +212,6 @@ function AppShellInner({
                       progress={pomodoro.progress}
                       pomodoroCount={pomodoro.pomodoroCount}
                       longBreakInterval={settings.longBreakInterval}
-                      tasks={tasks}
-                      activeTaskId={activeTaskId}
-                      onSelectActive={setActiveTaskId}
-                      onToggleTask={toggleTask}
-                      completedPomodoros={completedPomodoros}
-                      hideActiveTaskOnDesktop
                     />
                     <TimerControls
                       status={pomodoro.status}
@@ -215,6 +220,14 @@ function AppShellInner({
                       onResume={pomodoro.resume}
                       onReset={pomodoro.reset}
                       onSkip={pomodoro.skip}
+                    />
+                    <ActiveTaskCard
+                      className="mobile-only"
+                      tasks={tasks}
+                      activeTaskId={activeTaskId}
+                      onSelectActive={setActiveTaskId}
+                      onToggleTask={toggleTask}
+                      completedPomodoros={completedPomodoros}
                     />
                   </div>
 
@@ -267,10 +280,14 @@ function AppShellInner({
 }
 
 export function AppShell() {
-  const { settings, setSettings } = useSettings();
+  const { settings, setSettings, hydrated } = useSettings();
   return (
     <LocaleProvider locale={settings.locale}>
-      <AppShellInner settings={settings} setSettings={setSettings} />
+      <AppShellInner
+        settings={settings}
+        setSettings={setSettings}
+        settingsHydrated={hydrated}
+      />
     </LocaleProvider>
   );
 }
